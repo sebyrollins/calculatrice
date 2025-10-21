@@ -9,81 +9,153 @@
 import UIKit
 
 class ViewController: UIViewController {
-    var _operateur:Character = " "
-    var _previousNumber : Double = 0
-    var _currentNumber : Double = 0 {
-        didSet{
-            ui_currentNumberlabel.text = "\(_currentNumber)"
+
+    // MARK: - Operation Enum
+    enum Operation {
+        case none
+        case add
+        case subtract
+        case multiply
+        case divide
+    }
+
+    // MARK: - Properties
+    private var currentOperation: Operation = .none
+    private var previousNumber: Double = 0
+    private var isEnteringDecimal: Bool = false
+    private var decimalMultiplier: Double = 0.1
+    private var currentNumber: Double = 0 {
+        didSet {
+            updateDisplay()
         }
     }
-    
-    @IBOutlet weak var ui_currentNumberlabel: UILabel!
-    
-    func calculDirect (){
-        let result:Double
-        
-        if _operateur == "+" {
-            result = _previousNumber + _currentNumber
-        } else if _operateur == "-" {
-            result = _previousNumber - _currentNumber
-        } else if _operateur == "/" {
-            result = _previousNumber / _currentNumber
-        } else if _operateur == "*" {
-            result = _previousNumber * _currentNumber
+
+    @IBOutlet weak var currentNumberLabel: UILabel!
+
+    // MARK: - Helper Methods
+
+    private func updateDisplay() {
+        // Format number: remove unnecessary decimals (5.0 -> 5, but keep 5.5)
+        if currentNumber.truncatingRemainder(dividingBy: 1) == 0 {
+            currentNumberLabel.text = "\(Int(currentNumber))"
         } else {
-            result = _currentNumber
+            currentNumberLabel.text = "\(currentNumber)"
         }
-        _previousNumber = result
-        _currentNumber = 0
-        ui_currentNumberlabel.text = "\(result)"
     }
-    
-    @IBAction func effaceDigit() {
-        _currentNumber = 0
-        _previousNumber = 0
+
+    private func calculateResult() {
+        let result: Double
+
+        switch currentOperation {
+        case .add:
+            result = previousNumber + currentNumber
+        case .subtract:
+            result = previousNumber - currentNumber
+        case .multiply:
+            result = previousNumber * currentNumber
+        case .divide:
+            // Protection against division by zero
+            if currentNumber == 0 {
+                currentNumberLabel.text = "Error"
+                currentNumber = 0
+                previousNumber = 0
+                currentOperation = .none
+                return
+            }
+            result = previousNumber / currentNumber
+        case .none:
+            result = currentNumber
+        }
+
+        previousNumber = result
+        currentNumber = result
+        isEnteringDecimal = false
+        decimalMultiplier = 0.1
     }
+
+    private func setOperation(_ operation: Operation) {
+        // First, calculate any pending operation
+        if currentOperation != .none && currentNumber != 0 {
+            calculateResult()
+        } else if currentNumber != 0 {
+            previousNumber = currentNumber
+        }
+
+        // Set the new operation
+        currentOperation = operation
+        currentNumber = 0
+        isEnteringDecimal = false
+        decimalMultiplier = 0.1
+    }
+
+    // MARK: - IBActions - Clear and Formatting
+
+    @IBAction func clearDisplay() {
+        currentNumber = 0
+        previousNumber = 0
+        currentOperation = .none
+        isEnteringDecimal = false
+        decimalMultiplier = 0.1
+    }
+
     @IBAction func changeSign() {
-        _currentNumber = _currentNumber * (-1)
+        currentNumber = currentNumber * (-1)
     }
-    @IBAction func pourcentage() {
-        _currentNumber = _currentNumber / 100
+
+    @IBAction func percentage() {
+        currentNumber = currentNumber / 100
     }
-    
-    @IBAction func diviseDigit() {
-        _operateur = "/"
-        calculDirect ()
+
+    // MARK: - IBActions - Operations
+
+    @IBAction func divide() {
+        setOperation(.divide)
     }
-    @IBAction func multiplyDigit() {
-        _operateur = "*"
-        calculDirect ()
+
+    @IBAction func multiply() {
+        setOperation(.multiply)
     }
-    @IBAction func soustractionDigit() {
-        _operateur = "-"
-        calculDirect ()
+
+    @IBAction func subtract() {
+        setOperation(.subtract)
     }
-    @IBAction func addDigit() {
-        _operateur = "+"
-        calculDirect ()
+
+    @IBAction func add() {
+        setOperation(.add)
     }
-    @IBAction func resultDigit() {
-        calculDirect ()
+
+    @IBAction func equals() {
+        calculateResult()
+        currentOperation = .none
+        currentNumber = 0
     }
-    
-    
+
+    // MARK: - IBActions - Number Input
+
     @IBAction func tapDigit(_ sender: UIButton) {
-        _currentNumber = _currentNumber*10 + Double(sender.tag)
+        let digit = Double(sender.tag)
+
+        if isEnteringDecimal {
+            // Adding decimal digits
+            currentNumber = currentNumber + (digit * decimalMultiplier)
+            decimalMultiplier *= 0.1
+        } else {
+            // Adding integer digits
+            currentNumber = currentNumber * 10 + digit
+        }
     }
-    
+
+    @IBAction func tapDecimalPoint() {
+        if !isEnteringDecimal {
+            isEnteringDecimal = true
+            decimalMultiplier = 0.1
+        }
+    }
+
+    // MARK: - View Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        updateDisplay()
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-
 }
-
