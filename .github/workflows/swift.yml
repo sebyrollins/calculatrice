@@ -17,6 +17,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build
-      run: xcodebuild -scheme Calculatrice -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' build
+      run: xcodebuild -project Calculatrice/Calculatrice.xcodeproj -scheme Calculatrice -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' build
     - name: Run tests
-      run: xcodebuild test -scheme Calculatrice -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15'
+      run: xcodebuild test -project Calculatrice/Calculatrice.xcodeproj -scheme Calculatrice -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15'
