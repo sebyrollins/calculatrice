@@ -286,18 +286,44 @@ function renderCorrectedText() {
     headerEl.appendChild(indexEl)
     headerEl.appendChild(timecodeEl)
 
-    // Text with highlights
-    const textEl = document.createElement('div')
-    textEl.className = 'srt-block-text'
+    // Text - Original avec surlignage
+    const originalEl = document.createElement('div')
+    originalEl.className = 'srt-block-text srt-block-original'
+
+    const originalLabel = document.createElement('div')
+    originalLabel.className = 'srt-block-label'
+    originalLabel.textContent = 'Original :'
+
+    const originalContent = document.createElement('div')
+    originalContent.className = 'srt-block-content'
 
     if (block.corrections && block.corrections.length > 0) {
-      textEl.innerHTML = SRTParser.applyCorrectionsWithHighlight(block.corrected, block.corrections)
+      originalContent.innerHTML = SRTParser.applyCorrectionsWithHighlight(block.original, block.corrections)
     } else {
-      textEl.textContent = block.corrected
+      originalContent.textContent = block.original
     }
 
+    originalEl.appendChild(originalLabel)
+    originalEl.appendChild(originalContent)
+
+    // Text - Corrigé
+    const correctedEl = document.createElement('div')
+    correctedEl.className = 'srt-block-text srt-block-corrected'
+
+    const correctedLabel = document.createElement('div')
+    correctedLabel.className = 'srt-block-label'
+    correctedLabel.textContent = 'Corrigé :'
+
+    const correctedContent = document.createElement('div')
+    correctedContent.className = 'srt-block-content'
+    correctedContent.textContent = block.corrected
+
+    correctedEl.appendChild(correctedLabel)
+    correctedEl.appendChild(correctedContent)
+
     blockEl.appendChild(headerEl)
-    blockEl.appendChild(textEl)
+    blockEl.appendChild(originalEl)
+    blockEl.appendChild(correctedEl)
 
     DOM.correctedTextPanel.appendChild(blockEl)
   })

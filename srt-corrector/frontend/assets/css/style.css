@@ -502,6 +502,35 @@ body {
   font-size: 1rem;
   line-height: 1.8;
   color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.srt-block-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-secondary);
+}
+
+.srt-block-content {
+  white-space: pre-wrap; /* Préserver les sauts de ligne */
+  word-wrap: break-word;
+}
+
+.srt-block-original {
+  padding: var(--spacing-sm);
+  background: #fff3cd;
+  border-radius: var(--radius-sm);
+  border: 1px solid #ffeaa7;
+}
+
+.srt-block-corrected {
+  padding: var(--spacing-sm);
+  background: #d1f2eb;
+  border-radius: var(--radius-sm);
+  border: 1px solid #a8e6cf;
 }
 
 /* Corrections Highlighting */

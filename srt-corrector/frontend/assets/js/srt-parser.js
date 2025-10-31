@@ -148,7 +148,14 @@ const SRTParser = {
    * @param {string} mimeType - Type MIME
    */
   downloadFile(content, filename, mimeType = 'text/plain') {
-    const blob = new Blob([content], { type: mimeType })
+    // Ajouter UTF-8 BOM pour compatibilité TextEdit (Mac)
+    const BOM = '\uFEFF'
+    const contentWithBOM = BOM + content
+
+    // Créer le Blob avec charset UTF-8 explicite
+    const blob = new Blob([contentWithBOM], {
+      type: `${mimeType};charset=utf-8`
+    })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
 
