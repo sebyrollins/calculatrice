@@ -183,11 +183,20 @@ async function correctWithClaude(blocks) {
   }
 
   const result = await response.json()
-  const content = result.content[0].text
+  let content = result.content[0].text
+
+  // Nettoyer la réponse (enlever les balises markdown si présentes)
+  // Claude Sonnet 4.5 retourne parfois ```json ... ``` au lieu de JSON pur
+  content = content.trim()
+  if (content.startsWith('```json')) {
+    content = content.replace(/^```json\s*/, '').replace(/\s*```$/, '')
+  } else if (content.startsWith('```')) {
+    content = content.replace(/^```\s*/, '').replace(/\s*```$/, '')
+  }
 
   // Parse la réponse JSON de Claude
   try {
-    const parsed = JSON.parse(content)
+    const parsed = JSON.parse(content.trim())
     return parsed.blocks || []
   } catch (e) {
     console.error('Erreur parsing réponse Claude:', e)
