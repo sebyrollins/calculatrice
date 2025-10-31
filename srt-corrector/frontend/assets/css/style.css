@@ -405,6 +405,27 @@ body {
   background: var(--color-bg);
 }
 
+.stat-filter {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.stat-filter:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-filter.active {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-filter.active .stat-label,
+.stat-filter.active .stat-value {
+  color: white;
+}
+
 .stat-label {
   display: block;
   font-size: 0.875rem;
@@ -716,11 +737,11 @@ body {
 }
 
 .validation-correction {
-  margin-bottom: var(--spacing-sm);
-  padding: var(--spacing-sm);
+  margin-bottom: 0.375rem;
+  padding: 0.5rem;
   background: var(--color-surface);
   border-radius: var(--radius-sm);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
 }
 
 .validation-correction-text {
@@ -745,27 +766,24 @@ body {
 
 .validation-actions {
   display: flex;
-  gap: var(--spacing-xs);
-  margin-top: var(--spacing-sm);
+  gap: 0.375rem;
+  margin-top: 0.375rem;
 }
 
 .validation-actions .btn {
-  font-size: 0.8125rem;
-  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.75rem;
+  padding: 0.375rem 0.5rem;
 }
 
-/* Action Bar - Sticky sous les headers des colonnes */
+/* Action Bar - Layout et style (le sticky est géré par .sticky-actions) */
 .action-bar {
-  position: sticky;
-  top: 60px; /* Juste sous les headers des colonnes */
-  z-index: 100;
   display: flex;
   justify-content: space-between;
   gap: var(--spacing-md);
   flex-wrap: wrap;
   padding: var(--spacing-lg);
   background: var(--color-surface);
-  border-radius: 0; /* Pas de radius pour coller au bord */
+  border-radius: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: var(--spacing-lg);
   border-bottom: 2px solid var(--color-border);
@@ -891,7 +909,7 @@ body {
 /* Cellules */
 .cell-text,
 .cell-validation {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-sm);
   vertical-align: top;
   border-right: 1px solid var(--color-border);
 }
@@ -905,11 +923,11 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-md);
-  padding-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  padding-bottom: 0.375rem;
   border-bottom: 1px solid var(--color-border);
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
 }
 
 .block-index {
@@ -923,8 +941,8 @@ body {
 
 /* Sections Original et Corrigé */
 .block-section {
-  margin-bottom: var(--spacing-md);
-  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  padding: 0.375rem;
   border-radius: var(--radius-sm);
 }
 
@@ -939,19 +957,19 @@ body {
 }
 
 .block-label {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: 0.25rem;
   color: var(--color-text-secondary);
 }
 
 .block-content {
   white-space: pre-wrap; /* Préserver les sauts de ligne */
   word-wrap: break-word;
-  font-size: 1rem;
-  line-height: 1.8;
+  font-size: 0.875rem;
+  line-height: 1.4;
   color: var(--color-text-primary);
 }
 
@@ -998,8 +1016,8 @@ body {
 
 /* Validation cards */
 .validation-card {
-  margin-bottom: var(--spacing-md);
-  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+  padding: var(--spacing-sm);
   background: var(--color-bg);
   border-radius: var(--radius-md);
   border-left: 3px solid var(--color-border);
@@ -1020,13 +1038,13 @@ body {
 }
 
 .validation-header {
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 0.375rem;
 }
 
 .validation-type-badge {
-  padding: 4px 8px;
+  padding: 2px 6px;
   border-radius: var(--radius-sm);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1043,11 +1061,11 @@ body {
 }
 
 .validation-correction {
-  margin-bottom: var(--spacing-sm);
-  padding: var(--spacing-sm);
+  margin-bottom: 0.375rem;
+  padding: 0.5rem;
   background: var(--color-surface);
   border-radius: var(--radius-sm);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
 }
 
 .validation-correction-text {
@@ -1072,11 +1090,11 @@ body {
 
 .validation-actions {
   display: flex;
-  gap: var(--spacing-xs);
-  margin-top: var(--spacing-sm);
+  gap: 0.375rem;
+  margin-top: 0.375rem;
 }
 
 .validation-actions .btn {
-  font-size: 0.8125rem;
-  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.75rem;
+  padding: 0.375rem 0.5rem;
 }

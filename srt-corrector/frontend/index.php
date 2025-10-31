@@ -141,19 +141,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
 
                 <!-- Statistics Bar - STICKY -->
                 <div class="stats-bar sticky-stats" id="statsBar">
-                    <div class="stat-item">
+                    <div class="stat-item stat-filter" data-filter="all">
                         <span class="stat-label">Total</span>
                         <span class="stat-value" id="statTotal">0</span>
                     </div>
-                    <div class="stat-item stat-minor">
+                    <div class="stat-item stat-minor stat-filter" data-filter="minor">
                         <span class="stat-label">Mineures</span>
                         <span class="stat-value" id="statMinor">0</span>
                     </div>
-                    <div class="stat-item stat-major">
+                    <div class="stat-item stat-major stat-filter" data-filter="major">
                         <span class="stat-label">Majeures</span>
                         <span class="stat-value" id="statMajor">0</span>
                     </div>
-                    <div class="stat-item stat-doubt">
+                    <div class="stat-item stat-doubt stat-filter" data-filter="doubt">
                         <span class="stat-label">Doutes</span>
                         <span class="stat-value" id="statDoubt">0</span>
                     </div>

@@ -6,7 +6,8 @@
 const AppState = {
   originalFilename: null,
   blocks: [],
-  validatedCorrections: new Set()
+  validatedCorrections: new Set(),
+  activeFilter: null // null = tous, 'minor', 'major', 'doubt', 'none' (sans correction)
 }
 
 // Éléments DOM
@@ -117,6 +118,11 @@ function initEventListeners() {
   if (DOM.newFileBtn) {
     DOM.newFileBtn.addEventListener('click', resetApp)
   }
+
+  // Filtres de statistiques
+  document.querySelectorAll('.stat-filter').forEach(filterBtn => {
+    filterBtn.addEventListener('click', handleFilterClick)
+  })
 }
 
 /**
@@ -261,12 +267,27 @@ function showEditor() {
 function renderBlocksTable() {
   DOM.blocksTableBody.innerHTML = ''
 
-  AppState.blocks.forEach(block => {
+  // Filtrer les blocs selon le filtre actif
+  let blocksToDisplay = AppState.blocks
+
+  if (AppState.activeFilter) {
+    blocksToDisplay = AppState.blocks.filter(block => {
+      if (!block.corrections || block.corrections.length === 0) {
+        return false // Pas de corrections
+      }
+
+      // Vérifier si le bloc contient le type de correction recherché
+      return block.corrections.some(c => c.type === AppState.activeFilter)
+    })
+  }
+
+  blocksToDisplay.forEach(block => {
     const row = document.createElement('tr')
     row.className = 'block-row'
     row.id = `block-row-${block.index}`
 
     // Déterminer le type de correction dominant pour la classe CSS
+    // Les blocs avec UNIQUEMENT des corrections mineures n'ont PAS de fond coloré
     let rowClass = 'row-no-correction'
     if (block.corrections && block.corrections.length > 0) {
       const hasDoubt = block.corrections.some(c => c.type === 'doubt')
@@ -276,9 +297,8 @@ function renderBlocksTable() {
         rowClass = 'row-has-doubt'
       } else if (hasMajor) {
         rowClass = 'row-has-major'
-      } else {
-        rowClass = 'row-has-minor'
       }
+      // Si seulement des corrections mineures, on garde row-no-correction (pas de fond coloré)
     }
     row.classList.add(rowClass)
 
@@ -330,18 +350,8 @@ function renderBlocksTable() {
         </div>
       `
     } else {
-      // Filtrer les corrections non-minor
-      const correctionsToValidate = block.corrections.filter(c => c.type !== 'minor')
-
-      if (correctionsToValidate.length === 0) {
-        validationCell.innerHTML = `
-          <div class="validation-empty">
-            <span class="validation-empty-icon">✓</span>
-            <span class="validation-empty-text">Corrections mineures uniquement</span>
-          </div>
-        `
-      } else {
-        correctionsToValidate.forEach((correction, corrIndex) => {
+      // Afficher TOUTES les corrections (y compris mineures)
+      block.corrections.forEach((correction, corrIndex) => {
           const correctionId = `${block.index}-${corrIndex}`
           const cardEl = document.createElement('div')
           cardEl.className = `validation-card validation-${correction.type}`
@@ -354,7 +364,7 @@ function renderBlocksTable() {
           cardEl.innerHTML = `
             <div class="validation-header">
               <span class="validation-type-badge badge-${correction.type}">
-                ${correction.type === 'major' ? 'MAJEURE' : 'DOUTE'}
+                ${correction.type === 'major' ? 'MAJEURE' : correction.type === 'doubt' ? 'DOUTE' : 'MINEURE'}
               </span>
             </div>
             <div class="validation-correction">
@@ -386,7 +396,6 @@ function renderBlocksTable() {
           cardEl.appendChild(actionsEl)
           validationCell.appendChild(cardEl)
         })
-      }
     }
 
     row.appendChild(textCell)
@@ -531,4 +540,33 @@ function updateStats(stats) {
   if (DOM.statMinor) DOM.statMinor.textContent = stats.minor
   if (DOM.statMajor) DOM.statMajor.textContent = stats.major
   if (DOM.statDoubt) DOM.statDoubt.textContent = stats.doubt
+}
+
+/**
+ * Gère le clic sur les filtres de statistiques
+ */
+function handleFilterClick(event) {
+  const filterBtn = event.currentTarget
+  const filterType = filterBtn.dataset.filter
+
+  // Si on clique sur le filtre actif, on le désactive
+  if (AppState.activeFilter === filterType) {
+    AppState.activeFilter = null
+    filterBtn.classList.remove('active')
+  } else {
+    // Sinon, on active le nouveau filtre
+    // Désactiver tous les filtres
+    document.querySelectorAll('.stat-filter').forEach(btn => {
+      btn.classList.remove('active')
+    })
+
+    // Activer le filtre cliqué
+    AppState.activeFilter = filterType === 'all' ? null : filterType
+    if (filterType !== 'all') {
+      filterBtn.classList.add('active')
+    }
+  }
+
+  // Re-render le tableau avec le filtre
+  renderBlocksTable()
 }
