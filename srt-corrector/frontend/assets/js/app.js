@@ -209,6 +209,11 @@ async function processUploadedFile(content, filename) {
  * Envoie le contenu au Cloudflare Worker
  */
 async function sendToWorker(content, filename) {
+  // Vérifier que le Worker est configuré
+  if (window.APP_CONFIG.workerUrl.includes('YOUR-SUBDOMAIN')) {
+    throw new Error(`⚠️ Le Worker Cloudflare n'est pas encore configuré.\n\nÉtapes :\n1. Déployez le Worker sur Cloudflare\n2. Modifiez l'URL dans frontend/lib/config.php\n\nConsultez le README.md pour les instructions.`)
+  }
+
   const response = await fetch(window.APP_CONFIG.workerUrl, {
     method: 'POST',
     headers: {
@@ -221,7 +226,8 @@ async function sendToWorker(content, filename) {
   })
 
   if (!response.ok) {
-    throw new Error(`Erreur serveur: ${response.status}`)
+    const errorText = await response.text()
+    throw new Error(`Erreur serveur: ${response.status}\n\nDétails: ${errorText}\n\nVérifiez que :\n1. Le Worker Cloudflare est déployé\n2. La clé ANTHROPIC_API_KEY est configurée\n3. L'URL du Worker est correcte dans config.php`)
   }
 
   const result = await response.json()

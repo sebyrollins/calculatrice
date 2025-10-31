@@ -65,6 +65,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
 
             <!-- Section Upload -->
             <section class="upload-section" id="uploadSection">
+                <?php if (strpos(WORKER_URL, 'YOUR-SUBDOMAIN') !== false): ?>
+                <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; margin-bottom: 1.5rem; border-radius: 0.5rem;">
+                    <strong>⚠️ Configuration requise</strong>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+                        Le Worker Cloudflare n'est pas encore configuré.
+                        <a href="README.md" style="color: #d97706; text-decoration: underline;">Consultez le README.md</a>
+                        pour les instructions de déploiement.
+                    </p>
+                </div>
+                <?php endif; ?>
                 <div class="upload-card">
                     <div class="upload-icon">📁</div>
                     <h2>Importer votre fichier SRT</h2>
