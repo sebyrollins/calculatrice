@@ -314,16 +314,12 @@ function renderBlocksTable() {
       <span class="block-timecode">${block.timecode}</span>
     `
 
-    // Original
+    // Original - TOUJOURS afficher le vrai texte original sans modifications
     const originalEl = document.createElement('div')
     originalEl.className = 'block-section block-original'
     originalEl.innerHTML = `
       <div class="block-label">ORIGINAL :</div>
-      <div class="block-content">${
-        block.corrections && block.corrections.length > 0
-          ? SRTParser.applyCorrectionsWithHighlight(block.original, block.corrections)
-          : SRTParser.escapeHtml(block.original)
-      }</div>
+      <div class="block-content">${SRTParser.escapeHtml(block.original)}</div>
     `
 
     // Corrigé
