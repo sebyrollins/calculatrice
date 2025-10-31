@@ -336,14 +336,42 @@ function renderValidations() {
   DOM.validationsPanel.innerHTML = ''
 
   AppState.blocks.forEach(block => {
+    // Créer un conteneur pour CHAQUE bloc (même sans corrections)
+    // pour garder l'alignement avec la colonne de gauche
+    const blockContainer = document.createElement('div')
+    blockContainer.className = 'validation-block-container'
+    blockContainer.id = `validation-block-${block.index}`
+
     if (!block.corrections || block.corrections.length === 0) {
+      // Bloc sans corrections - afficher un message
+      blockContainer.innerHTML = `
+        <div class="validation-empty">
+          <span class="validation-empty-icon">✓</span>
+          <span class="validation-empty-text">Aucune correction</span>
+        </div>
+      `
+      DOM.validationsPanel.appendChild(blockContainer)
       return
     }
+
+    // En-tête du bloc
+    const blockHeader = document.createElement('div')
+    blockHeader.className = 'validation-block-header'
+    blockHeader.textContent = `Bloc #${block.index}`
+    blockContainer.appendChild(blockHeader)
 
     // Filtrer les corrections non-minor (les minor n'ont pas besoin de validation)
     const correctionsToValidate = block.corrections.filter(c => c.type !== 'minor')
 
     if (correctionsToValidate.length === 0) {
+      // Seulement des corrections mineures
+      blockContainer.innerHTML += `
+        <div class="validation-empty">
+          <span class="validation-empty-icon">✓</span>
+          <span class="validation-empty-text">Corrections mineures uniquement</span>
+        </div>
+      `
+      DOM.validationsPanel.appendChild(blockContainer)
       return
     }
 
@@ -412,8 +440,10 @@ function renderValidations() {
       cardEl.appendChild(correctionEl)
       cardEl.appendChild(actionsEl)
 
-      DOM.validationsPanel.appendChild(cardEl)
+      blockContainer.appendChild(cardEl)
     })
+
+    DOM.validationsPanel.appendChild(blockContainer)
   })
 }
 
