@@ -431,12 +431,69 @@ body {
   border-left: 4px solid var(--color-doubt);
 }
 
-/* Editor Grid */
-.editor-grid {
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
+/* Sticky Elements Heights */
+:root {
+  --stats-height: 120px;
+  --actions-height: 80px;
+  --header-height: 50px;
+}
+
+/* Stats Bar - STICKY en haut */
+.sticky-stats {
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  background: var(--color-surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Action Bar - STICKY sous les stats */
+.sticky-actions {
+  position: sticky;
+  top: var(--stats-height);
+  z-index: 200;
+}
+
+/* Blocks Table */
+.blocks-table-container {
+  margin-top: var(--spacing-lg);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: visible;
+}
+
+.blocks-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed; /* Alignement parfait des colonnes */
+}
+
+/* Table Header - STICKY sous action bar */
+.blocks-table-header {
+  position: sticky;
+  top: calc(var(--stats-height) + var(--actions-height));
+  z-index: 100;
+  background: var(--color-bg);
+}
+
+.blocks-table-header th {
+  padding: var(--spacing-md) var(--spacing-lg);
+  text-align: left;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  border-bottom: 2px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.blocks-table-header .col-text {
+  width: 60%;
+}
+
+.blocks-table-header .col-validation {
+  width: 40%;
 }
 
 .editor-panel {
@@ -802,4 +859,224 @@ body {
 .srt-block,
 .validation-card {
   animation: fadeIn 0.3s ease;
+}
+/* ===== STYLES POUR LE TABLEAU DES BLOCS ===== */
+
+/* Lignes du tableau avec différenciation visuelle */
+.block-row {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.2s ease;
+}
+
+/* BLOCS SANS CORRECTION - Gris très clair */
+.block-row.row-no-correction {
+  background-color: #f8f9fa;
+}
+
+/* BLOCS AVEC CORRECTIONS MINEURES - Bleu très clair */
+.block-row.row-has-minor {
+  background-color: #e3f2fd;
+}
+
+/* BLOCS AVEC CORRECTIONS MAJEURES - Vert clair */
+.block-row.row-has-major {
+  background-color: #e8f5e9;
+}
+
+/* BLOCS AVEC DOUTES - Orange clair */
+.block-row.row-has-doubt {
+  background-color: #fff3e0;
+}
+
+/* Cellules */
+.cell-text,
+.cell-validation {
+  padding: var(--spacing-lg);
+  vertical-align: top;
+  border-right: 1px solid var(--color-border);
+}
+
+.cell-validation {
+  border-right: none;
+}
+
+/* Header de bloc */
+.block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.block-index {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.block-timecode {
+  color: var(--color-text-muted);
+}
+
+/* Sections Original et Corrigé */
+.block-section {
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+}
+
+.block-original {
+  background: #fff9c4;
+  border: 1px solid #fff176;
+}
+
+.block-corrected {
+  background: #c8e6c9;
+  border: 1px solid #a5d6a7;
+}
+
+.block-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-secondary);
+}
+
+.block-content {
+  white-space: pre-wrap; /* Préserver les sauts de ligne */
+  word-wrap: break-word;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--color-text-primary);
+}
+
+/* Corrections highlighting dans le texte */
+.correction {
+  position: relative;
+  border-radius: 2px;
+  padding: 2px 0;
+  cursor: help;
+}
+
+.correction-minor {
+  background-color: var(--color-minor-bg);
+  color: var(--color-minor);
+}
+
+.correction-major {
+  background-color: var(--color-major-bg);
+  color: var(--color-major);
+}
+
+.correction-doubt {
+  background-color: var(--color-doubt-bg);
+  color: var(--color-doubt);
+}
+
+/* Validation empty state */
+.validation-empty {
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.validation-empty-icon {
+  display: block;
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-success);
+}
+
+.validation-empty-text {
+  font-size: 0.875rem;
+}
+
+/* Validation cards */
+.validation-card {
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-border);
+}
+
+.validation-card.validation-major {
+  border-left-color: var(--color-major);
+}
+
+.validation-card.validation-doubt {
+  border-left-color: var(--color-doubt);
+}
+
+.validation-card.validated {
+  opacity: 0.6;
+  background: var(--color-success-light);
+  border-left-color: var(--color-success);
+}
+
+.validation-header {
+  margin-bottom: var(--spacing-sm);
+}
+
+.validation-type-badge {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.validation-type-badge.badge-major {
+  background: var(--color-major-bg);
+  color: var(--color-major);
+}
+
+.validation-type-badge.badge-doubt {
+  background: var(--color-doubt-bg);
+  color: var(--color-doubt);
+}
+
+.validation-correction {
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+}
+
+.validation-correction-text {
+  margin-bottom: var(--spacing-xs);
+  font-family: var(--font-mono);
+}
+
+.validation-correction-text .original {
+  color: var(--color-danger);
+  text-decoration: line-through;
+}
+
+.validation-correction-text .corrected {
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+.validation-correction-reason {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.validation-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
+.validation-actions .btn {
+  font-size: 0.8125rem;
+  padding: var(--spacing-xs) var(--spacing-sm);
 }

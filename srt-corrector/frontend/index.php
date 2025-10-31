@@ -139,8 +139,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
             <!-- Section Editor -->
             <section class="editor-section" id="editorSection" style="display: none;">
 
-                <!-- Statistics Bar -->
-                <div class="stats-bar" id="statsBar">
+                <!-- Statistics Bar - STICKY -->
+                <div class="stats-bar sticky-stats" id="statsBar">
                     <div class="stat-item">
                         <span class="stat-label">Total</span>
                         <span class="stat-value" id="statTotal">0</span>
@@ -159,33 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
                     </div>
                 </div>
 
-                <!-- Editor Grid -->
-                <div class="editor-grid">
-
-                    <!-- Left Panel: Corrected Text -->
-                    <div class="editor-panel editor-text">
-                        <div class="panel-header">
-                            <h3>Texte corrigé</h3>
-                        </div>
-                        <div class="panel-content" id="correctedTextPanel">
-                            <!-- Content will be dynamically generated -->
-                        </div>
-                    </div>
-
-                    <!-- Right Panel: Validations -->
-                    <div class="editor-panel editor-validations">
-                        <div class="panel-header">
-                            <h3>Validations</h3>
-                        </div>
-                        <div class="panel-content" id="validationsPanel">
-                            <!-- Content will be dynamically generated -->
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="action-bar">
+                <!-- Action Buttons - STICKY -->
+                <div class="action-bar sticky-actions">
                     <div class="action-group">
                         <button class="btn btn-secondary" id="validateAllBtn">
                             <span class="btn-icon">✓</span>
@@ -218,6 +193,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
                             Nouveau fichier
                         </button>
                     </div>
+                </div>
+
+                <!-- Blocks Table - SCROLLABLE -->
+                <div class="blocks-table-container">
+                    <table class="blocks-table">
+                        <thead class="blocks-table-header sticky-header">
+                            <tr>
+                                <th class="col-text">Texte corrigé</th>
+                                <th class="col-validation">Validations</th>
+                            </tr>
+                        </thead>
+                        <tbody id="blocksTableBody">
+                            <!-- Content will be dynamically generated -->
+                        </tbody>
+                    </table>
                 </div>
 
             </section>

@@ -33,7 +33,8 @@ const DOM = {
   validateDoubtBtn: null,
   downloadSrtBtn: null,
   downloadTxtBtn: null,
-  newFileBtn: null
+  newFileBtn: null,
+  blocksTableBody: null
 }
 
 /**
@@ -76,6 +77,7 @@ function initDOM() {
   DOM.downloadSrtBtn = document.getElementById('downloadSrtBtn')
   DOM.downloadTxtBtn = document.getElementById('downloadTxtBtn')
   DOM.newFileBtn = document.getElementById('newFileBtn')
+  DOM.blocksTableBody = document.getElementById('blocksTableBody')
 }
 
 /**
@@ -249,201 +251,147 @@ function showEditor() {
   const stats = SRTParser.calculateStats(AppState.blocks)
   updateStats(stats)
 
-  // Afficher le texte corrigé
-  renderCorrectedText()
-
-  // Afficher les validations
-  renderValidations()
+  // Afficher le tableau des blocs
+  renderBlocksTable()
 }
 
 /**
- * Affiche le texte corrigé avec surlignage
+ * Affiche le tableau des blocs (texte + validations)
  */
-function renderCorrectedText() {
-  DOM.correctedTextPanel.innerHTML = ''
+function renderBlocksTable() {
+  DOM.blocksTableBody.innerHTML = ''
 
   AppState.blocks.forEach(block => {
-    const blockEl = document.createElement('div')
-    blockEl.className = 'srt-block'
-    blockEl.id = `block-${block.index}`
+    const row = document.createElement('tr')
+    row.className = 'block-row'
+    row.id = `block-row-${block.index}`
 
+    // Déterminer le type de correction dominant pour la classe CSS
+    let rowClass = 'row-no-correction'
     if (block.corrections && block.corrections.length > 0) {
-      blockEl.classList.add('has-corrections')
+      const hasDoubt = block.corrections.some(c => c.type === 'doubt')
+      const hasMajor = block.corrections.some(c => c.type === 'major')
+
+      if (hasDoubt) {
+        rowClass = 'row-has-doubt'
+      } else if (hasMajor) {
+        rowClass = 'row-has-major'
+      } else {
+        rowClass = 'row-has-minor'
+      }
     }
+    row.classList.add(rowClass)
+
+    // === COLONNE GAUCHE : Texte ===
+    const textCell = document.createElement('td')
+    textCell.className = 'cell-text'
 
     // Header
     const headerEl = document.createElement('div')
-    headerEl.className = 'srt-block-header'
+    headerEl.className = 'block-header'
+    headerEl.innerHTML = `
+      <span class="block-index">Bloc #${block.index}</span>
+      <span class="block-timecode">${block.timecode}</span>
+    `
 
-    const indexEl = document.createElement('span')
-    indexEl.className = 'srt-block-index'
-    indexEl.textContent = `Bloc #${block.index}`
-
-    const timecodeEl = document.createElement('span')
-    timecodeEl.className = 'srt-block-timecode'
-    timecodeEl.textContent = block.timecode
-
-    headerEl.appendChild(indexEl)
-    headerEl.appendChild(timecodeEl)
-
-    // Text - Original avec surlignage
+    // Original
     const originalEl = document.createElement('div')
-    originalEl.className = 'srt-block-text srt-block-original'
+    originalEl.className = 'block-section block-original'
+    originalEl.innerHTML = `
+      <div class="block-label">ORIGINAL :</div>
+      <div class="block-content">${
+        block.corrections && block.corrections.length > 0
+          ? SRTParser.applyCorrectionsWithHighlight(block.original, block.corrections)
+          : SRTParser.escapeHtml(block.original)
+      }</div>
+    `
 
-    const originalLabel = document.createElement('div')
-    originalLabel.className = 'srt-block-label'
-    originalLabel.textContent = 'Original :'
-
-    const originalContent = document.createElement('div')
-    originalContent.className = 'srt-block-content'
-
-    if (block.corrections && block.corrections.length > 0) {
-      originalContent.innerHTML = SRTParser.applyCorrectionsWithHighlight(block.original, block.corrections)
-    } else {
-      originalContent.textContent = block.original
-    }
-
-    originalEl.appendChild(originalLabel)
-    originalEl.appendChild(originalContent)
-
-    // Text - Corrigé
+    // Corrigé
     const correctedEl = document.createElement('div')
-    correctedEl.className = 'srt-block-text srt-block-corrected'
+    correctedEl.className = 'block-section block-corrected'
+    correctedEl.innerHTML = `
+      <div class="block-label">CORRIGÉ :</div>
+      <div class="block-content">${SRTParser.escapeHtml(block.corrected)}</div>
+    `
 
-    const correctedLabel = document.createElement('div')
-    correctedLabel.className = 'srt-block-label'
-    correctedLabel.textContent = 'Corrigé :'
+    textCell.appendChild(headerEl)
+    textCell.appendChild(originalEl)
+    textCell.appendChild(correctedEl)
 
-    const correctedContent = document.createElement('div')
-    correctedContent.className = 'srt-block-content'
-    correctedContent.textContent = block.corrected
-
-    correctedEl.appendChild(correctedLabel)
-    correctedEl.appendChild(correctedContent)
-
-    blockEl.appendChild(headerEl)
-    blockEl.appendChild(originalEl)
-    blockEl.appendChild(correctedEl)
-
-    DOM.correctedTextPanel.appendChild(blockEl)
-  })
-}
-
-/**
- * Affiche le panneau de validation
- */
-function renderValidations() {
-  DOM.validationsPanel.innerHTML = ''
-
-  AppState.blocks.forEach(block => {
-    // Créer un conteneur pour CHAQUE bloc (même sans corrections)
-    // pour garder l'alignement avec la colonne de gauche
-    const blockContainer = document.createElement('div')
-    blockContainer.className = 'validation-block-container'
-    blockContainer.id = `validation-block-${block.index}`
+    // === COLONNE DROITE : Validations ===
+    const validationCell = document.createElement('td')
+    validationCell.className = 'cell-validation'
 
     if (!block.corrections || block.corrections.length === 0) {
-      // Bloc sans corrections - afficher un message
-      blockContainer.innerHTML = `
+      validationCell.innerHTML = `
         <div class="validation-empty">
           <span class="validation-empty-icon">✓</span>
           <span class="validation-empty-text">Aucune correction</span>
         </div>
       `
-      DOM.validationsPanel.appendChild(blockContainer)
-      return
-    }
+    } else {
+      // Filtrer les corrections non-minor
+      const correctionsToValidate = block.corrections.filter(c => c.type !== 'minor')
 
-    // En-tête du bloc
-    const blockHeader = document.createElement('div')
-    blockHeader.className = 'validation-block-header'
-    blockHeader.textContent = `Bloc #${block.index}`
-    blockContainer.appendChild(blockHeader)
+      if (correctionsToValidate.length === 0) {
+        validationCell.innerHTML = `
+          <div class="validation-empty">
+            <span class="validation-empty-icon">✓</span>
+            <span class="validation-empty-text">Corrections mineures uniquement</span>
+          </div>
+        `
+      } else {
+        correctionsToValidate.forEach((correction, corrIndex) => {
+          const correctionId = `${block.index}-${corrIndex}`
+          const cardEl = document.createElement('div')
+          cardEl.className = `validation-card validation-${correction.type}`
+          cardEl.id = `validation-${correctionId}`
 
-    // Filtrer les corrections non-minor (les minor n'ont pas besoin de validation)
-    const correctionsToValidate = block.corrections.filter(c => c.type !== 'minor')
+          if (AppState.validatedCorrections.has(correctionId)) {
+            cardEl.classList.add('validated')
+          }
 
-    if (correctionsToValidate.length === 0) {
-      // Seulement des corrections mineures
-      blockContainer.innerHTML += `
-        <div class="validation-empty">
-          <span class="validation-empty-icon">✓</span>
-          <span class="validation-empty-text">Corrections mineures uniquement</span>
-        </div>
-      `
-      DOM.validationsPanel.appendChild(blockContainer)
-      return
-    }
+          cardEl.innerHTML = `
+            <div class="validation-header">
+              <span class="validation-type-badge badge-${correction.type}">
+                ${correction.type === 'major' ? 'MAJEURE' : 'DOUTE'}
+              </span>
+            </div>
+            <div class="validation-correction">
+              <div class="validation-correction-text">
+                <span class="original">${SRTParser.escapeHtml(correction.original)}</span>
+                →
+                <span class="corrected">${SRTParser.escapeHtml(correction.corrected)}</span>
+              </div>
+              <div class="validation-correction-reason">${SRTParser.escapeHtml(correction.reason)}</div>
+            </div>
+          `
 
-    correctionsToValidate.forEach((correction, corrIndex) => {
-      const cardEl = document.createElement('div')
-      const correctionId = `${block.index}-${corrIndex}`
-      cardEl.className = `validation-card validation-${correction.type}`
-      cardEl.id = `validation-${correctionId}`
+          const actionsEl = document.createElement('div')
+          actionsEl.className = 'validation-actions'
 
-      if (AppState.validatedCorrections.has(correctionId)) {
-        cardEl.classList.add('validated')
+          const validateBtn = document.createElement('button')
+          validateBtn.className = 'btn btn-success'
+          validateBtn.innerHTML = '<span class="btn-icon">✓</span> Valider'
+          validateBtn.onclick = () => validateSingleCorrection(block.index, corrIndex)
+
+          const editBtn = document.createElement('button')
+          editBtn.className = 'btn btn-outline'
+          editBtn.innerHTML = '<span class="btn-icon">✏️</span> Modifier'
+          editBtn.onclick = () => editCorrection(block.index, corrIndex)
+
+          actionsEl.appendChild(validateBtn)
+          actionsEl.appendChild(editBtn)
+
+          cardEl.appendChild(actionsEl)
+          validationCell.appendChild(cardEl)
+        })
       }
+    }
 
-      // Header
-      const headerEl = document.createElement('div')
-      headerEl.className = 'validation-header'
-
-      const blockNumEl = document.createElement('span')
-      blockNumEl.className = 'validation-block-number'
-      blockNumEl.textContent = `Bloc #${block.index}`
-
-      const badgeEl = document.createElement('span')
-      badgeEl.className = `validation-type-badge badge-${correction.type}`
-      badgeEl.textContent = correction.type === 'major' ? 'Majeure' : 'Doute'
-
-      headerEl.appendChild(blockNumEl)
-      headerEl.appendChild(badgeEl)
-
-      // Correction details
-      const correctionEl = document.createElement('div')
-      correctionEl.className = 'validation-correction'
-
-      const textEl = document.createElement('div')
-      textEl.className = 'validation-correction-text'
-      textEl.innerHTML = `
-        <span class="original">${SRTParser.escapeHtml(correction.original)}</span>
-        →
-        <span class="corrected">${SRTParser.escapeHtml(correction.corrected)}</span>
-      `
-
-      const reasonEl = document.createElement('div')
-      reasonEl.className = 'validation-correction-reason'
-      reasonEl.textContent = correction.reason
-
-      correctionEl.appendChild(textEl)
-      correctionEl.appendChild(reasonEl)
-
-      // Actions
-      const actionsEl = document.createElement('div')
-      actionsEl.className = 'validation-actions'
-
-      const validateBtn = document.createElement('button')
-      validateBtn.className = 'btn btn-success'
-      validateBtn.innerHTML = '<span class="btn-icon">✓</span> Valider'
-      validateBtn.onclick = () => validateSingleCorrection(block.index, corrIndex)
-
-      const editBtn = document.createElement('button')
-      editBtn.className = 'btn btn-outline'
-      editBtn.innerHTML = '<span class="btn-icon">✏️</span> Modifier'
-      editBtn.onclick = () => editCorrection(block.index, corrIndex)
-
-      actionsEl.appendChild(validateBtn)
-      actionsEl.appendChild(editBtn)
-
-      cardEl.appendChild(headerEl)
-      cardEl.appendChild(correctionEl)
-      cardEl.appendChild(actionsEl)
-
-      blockContainer.appendChild(cardEl)
-    })
-
-    DOM.validationsPanel.appendChild(blockContainer)
+    row.appendChild(textCell)
+    row.appendChild(validationCell)
+    DOM.blocksTableBody.appendChild(row)
   })
 }
 
