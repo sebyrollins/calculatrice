@@ -1,7 +1,10 @@
 <?php
 /**
  * Configuration de l'application SRT Corrector
+ * Compatible PHP 8.4
  */
+
+declare(strict_types=1);
 
 // URL du Cloudflare Worker
 // À MODIFIER après déploiement du Worker

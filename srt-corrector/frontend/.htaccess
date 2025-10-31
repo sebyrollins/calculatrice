@@ -1,33 +1,23 @@
-# Configuration pour SRT Corrector Pro
+# Configuration pour SRT Corrector Pro - PHP 8.4
 
-# ===== PHP Configuration =====
-php_value upload_max_filesize 50M
-php_value post_max_size 50M
-php_value memory_limit 128M
-php_value max_execution_time 300
-php_value max_input_time 300
-
-# Activer l'affichage des erreurs en développement (désactiver en production)
-# php_flag display_errors Off
-php_flag log_errors On
-
-# ===== CORS Configuration =====
-# Autoriser les requêtes cross-origin (si nécessaire)
-<IfModule mod_headers.c>
-    Header set Access-Control-Allow-Origin "*"
-    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
-    Header set Access-Control-Allow-Headers "Content-Type"
-</IfModule>
+# ===== UTF-8 Encoding =====
+AddDefaultCharset UTF-8
 
 # ===== Security =====
 # Désactiver l'indexation des répertoires
 Options -Indexes
 
-# Protéger le dossier logs
+# Protéger les fichiers cachés
 <FilesMatch "^\.">
-    Order allow,deny
-    Deny from all
+    Require all denied
 </FilesMatch>
+
+# ===== CORS Configuration =====
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>
 
 # ===== Compression =====
 <IfModule mod_deflate.c>
@@ -39,15 +29,4 @@ Options -Indexes
     ExpiresActive On
     ExpiresByType text/css "access plus 1 month"
     ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType image/png "access plus 1 month"
-    ExpiresByType image/jpg "access plus 1 month"
-    ExpiresByType image/jpeg "access plus 1 month"
 </IfModule>
-
-# ===== UTF-8 Encoding =====
-AddDefaultCharset UTF-8
-AddCharset UTF-8 .html .css .js .xml .json .rss .php .srt
-
-# ===== Error Pages (optional) =====
-# ErrorDocument 404 /st/index.php
-# ErrorDocument 500 /st/index.php

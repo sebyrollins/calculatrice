@@ -2,7 +2,10 @@
 /**
  * SRT Corrector Pro
  * Application de correction professionnelle de fichiers SRT
+ * Compatible PHP 8.4
  */
+
+declare(strict_types=1);
 
 require_once __DIR__ . '/lib/functions.php';
 

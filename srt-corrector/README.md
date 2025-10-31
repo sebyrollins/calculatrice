@@ -15,7 +15,7 @@ Application professionnelle de correction de fichiers SRT (sous-titres) utilisan
 
 ### Backend (OVH)
 - Hébergement mutualisé OVH (100 Mo minimum)
-- PHP 7.4 ou supérieur
+- PHP 8.4 (compatible PHP 8.0+)
 - Accès FTP
 
 ### Cloudflare Worker
