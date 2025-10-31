@@ -896,14 +896,14 @@ body {
   background-color: #e3f2fd;
 }
 
-/* BLOCS AVEC CORRECTIONS MAJEURES - Vert clair */
+/* BLOCS AVEC CORRECTIONS MAJEURES - Rouge brillant clair */
 .block-row.row-has-major {
-  background-color: #e8f5e9;
+  background-color: #ffcdd2;
 }
 
-/* BLOCS AVEC DOUTES - Orange clair */
+/* BLOCS AVEC DOUTES - Rouge brillant clair */
 .block-row.row-has-doubt {
-  background-color: #fff3e0;
+  background-color: #ffcdd2;
 }
 
 /* Cellules */
@@ -956,6 +956,17 @@ body {
   border: 1px solid #a5d6a7;
 }
 
+/* Distinction validé vs non validé dans section CORRIGÉ */
+.block-corrected.block-validated {
+  background: #c8e6c9; /* Vert actuel pour les blocs validés */
+  border: 1px solid #a5d6a7;
+}
+
+.block-corrected.block-unvalidated {
+  background: #e8f5e9; /* Vert de majeur (plus clair) pour les blocs non validés */
+  border: 1px solid #c8e6c9;
+}
+
 .block-label {
   font-size: 0.6875rem;
   font-weight: 600;
@@ -994,6 +1005,35 @@ body {
 .correction-doubt {
   background-color: var(--color-doubt-bg);
   color: var(--color-doubt);
+}
+
+/* Error highlighting dans ORIGINAL (surligner sans remplacer) */
+.error-highlight {
+  position: relative;
+  border-radius: 2px;
+  padding: 2px 4px;
+  font-weight: 600;
+}
+
+.error-highlight-minor {
+  background-color: var(--color-minor-bg);
+  color: var(--color-minor);
+  text-decoration: underline;
+  text-decoration-style: wavy;
+}
+
+.error-highlight-major {
+  background-color: var(--color-major-bg);
+  color: var(--color-major);
+  text-decoration: underline;
+  text-decoration-style: wavy;
+}
+
+.error-highlight-doubt {
+  background-color: var(--color-doubt-bg);
+  color: var(--color-doubt);
+  text-decoration: underline;
+  text-decoration-style: wavy;
 }
 
 /* Validation empty state */

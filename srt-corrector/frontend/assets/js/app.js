@@ -286,10 +286,15 @@ function renderBlocksTable() {
     row.className = 'block-row'
     row.id = `block-row-${block.index}`
 
+    // Vérifier si toutes les corrections sont validées
+    const allValidated = block.corrections && block.corrections.length > 0 &&
+      block.corrections.every((c, idx) => AppState.validatedCorrections.has(`${block.index}-${idx}`))
+
     // Déterminer le type de correction dominant pour la classe CSS
     // Les blocs avec UNIQUEMENT des corrections mineures n'ont PAS de fond coloré
+    // Les blocs où TOUTES les corrections sont validées n'ont PAS de fond coloré
     let rowClass = 'row-no-correction'
-    if (block.corrections && block.corrections.length > 0) {
+    if (block.corrections && block.corrections.length > 0 && !allValidated) {
       const hasDoubt = block.corrections.some(c => c.type === 'doubt')
       const hasMajor = block.corrections.some(c => c.type === 'major')
 
@@ -314,17 +319,21 @@ function renderBlocksTable() {
       <span class="block-timecode">${block.timecode}</span>
     `
 
-    // Original - TOUJOURS afficher le vrai texte original sans modifications
+    // Original - Afficher le vrai texte original avec surlignage des erreurs
     const originalEl = document.createElement('div')
     originalEl.className = 'block-section block-original'
     originalEl.innerHTML = `
       <div class="block-label">ORIGINAL :</div>
-      <div class="block-content">${SRTParser.escapeHtml(block.original)}</div>
+      <div class="block-content">${
+        block.corrections && block.corrections.length > 0
+          ? SRTParser.highlightOriginalErrors(block.original, block.corrections)
+          : SRTParser.escapeHtml(block.original)
+      }</div>
     `
 
-    // Corrigé
+    // Corrigé (couleur différente si validé vs non validé)
     const correctedEl = document.createElement('div')
-    correctedEl.className = 'block-section block-corrected'
+    correctedEl.className = `block-section block-corrected ${allValidated ? 'block-validated' : 'block-unvalidated'}`
     correctedEl.innerHTML = `
       <div class="block-label">CORRIGÉ :</div>
       <div class="block-content">${SRTParser.escapeHtml(block.corrected)}</div>
@@ -407,10 +416,8 @@ function validateSingleCorrection(blockIndex, corrIndex) {
   const correctionId = `${blockIndex}-${corrIndex}`
   AppState.validatedCorrections.add(correctionId)
 
-  const card = document.getElementById(`validation-${correctionId}`)
-  if (card) {
-    card.classList.add('validated')
-  }
+  // Re-render pour mettre à jour le fond du bloc si toutes corrections validées
+  renderBlocksTable()
 }
 
 /**
@@ -455,14 +462,12 @@ function validateCorrections(type) {
 
         const correctionId = `${block.index}-${corrIndex}`
         AppState.validatedCorrections.add(correctionId)
-
-        const card = document.getElementById(`validation-${correctionId}`)
-        if (card) {
-          card.classList.add('validated')
-        }
       }
     })
   })
+
+  // Re-render pour mettre à jour l'affichage
+  renderBlocksTable()
 }
 
 /**

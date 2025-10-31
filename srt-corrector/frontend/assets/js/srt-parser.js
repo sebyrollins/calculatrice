@@ -126,6 +126,44 @@ const SRTParser = {
   },
 
   /**
+   * Surligne les erreurs dans le texte ORIGINAL sans les remplacer
+   * @param {string} text - Texte original
+   * @param {Array} corrections - Tableau de corrections
+   * @returns {string} HTML avec erreurs surlignées (texte original intact)
+   */
+  highlightOriginalErrors(text, corrections) {
+    if (!corrections || corrections.length === 0) {
+      return this.escapeHtml(text)
+    }
+
+    // Trier les corrections par position (du plus grand au plus petit pour éviter les décalages)
+    const sortedCorrections = [...corrections].sort((a, b) => b.position - a.position)
+
+    let result = text
+
+    sortedCorrections.forEach(correction => {
+      const { original, type, position } = correction
+
+      // Trouver la position exacte de l'erreur
+      const startPos = position
+      const endPos = startPos + original.length
+
+      if (startPos >= 0 && endPos <= result.length) {
+        const before = result.substring(0, startPos)
+        const errorText = result.substring(startPos, endPos)
+        const after = result.substring(endPos)
+
+        // Créer le span de surlignage SANS remplacer le texte
+        const highlighted = `<span class="error-highlight error-highlight-${type}">${this.escapeHtml(errorText)}</span>`
+
+        result = before + highlighted + after
+      }
+    })
+
+    return result
+  },
+
+  /**
    * Échappe les caractères HTML
    * @param {string} text - Texte à échapper
    * @returns {string} Texte échappé
