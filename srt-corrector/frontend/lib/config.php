@@ -7,8 +7,7 @@
 declare(strict_types=1);
 
 // URL du Cloudflare Worker
-// À MODIFIER après déploiement du Worker
-define('WORKER_URL', 'https://srt-corrector-worker.YOUR-SUBDOMAIN.workers.dev');
+define('WORKER_URL', 'https://srt-corrector-worker.sraynal.workers.dev/');
 
 // Limites de fichiers
 define('MAX_FILE_SIZE', 50 * 1024); // 50 Ko en bytes
