@@ -167,7 +167,7 @@ async function correctWithClaude(blocks) {
       'anthropic-version': '2023-06-01'
     },
     body: JSON.stringify({
-      model: 'claude-3-5-sonnet-20240620',
+      model: 'claude-3-haiku-20240307',
       max_tokens: 16000,
       temperature: 0,
       messages: [{
