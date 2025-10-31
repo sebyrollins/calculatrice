@@ -31,11 +31,16 @@ define('TEMP_DIR', sys_get_temp_dir());
 date_default_timezone_set('Europe/Paris');
 
 // Logs d'erreurs
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/../../logs/error.log');
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
 
 // Créer le dossier logs s'il n'existe pas
-if (!file_exists(__DIR__ . '/../../logs')) {
-    @mkdir(__DIR__ . '/../../logs', 0755, true);
+$logsDir = __DIR__ . '/../../logs';
+if (!file_exists($logsDir)) {
+    @mkdir($logsDir, 0755, true);
+}
+
+// Configurer le fichier de log seulement si le dossier existe
+if (is_dir($logsDir) && is_writable($logsDir)) {
+    ini_set('error_log', $logsDir . '/error.log');
 }
