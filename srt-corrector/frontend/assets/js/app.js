@@ -209,6 +209,9 @@ async function processUploadedFile(content, filename) {
 
     updateProgress(90, 'Traitement des résultats...')
 
+    // Nettoyer les corrections fantômes (où original === corrected)
+    cleanPhantomCorrections(correctedBlocks)
+
     // Sauvegarder les blocs
     AppState.blocks = correctedBlocks
 
@@ -224,6 +227,28 @@ async function processUploadedFile(content, filename) {
     alert(`Erreur : ${error.message}`)
     showSection('upload')
   }
+}
+
+/**
+ * Nettoie les corrections "fantômes" où original === corrected
+ * Ces faux positifs peuvent être générés par l'IA
+ */
+function cleanPhantomCorrections(blocks) {
+  blocks.forEach(block => {
+    if (block.corrections && block.corrections.length > 0) {
+      // Filtrer les corrections où original === corrected
+      const originalCount = block.corrections.length
+      block.corrections = block.corrections.filter(correction => {
+        return correction.original !== correction.corrected
+      })
+
+      // Log si des corrections fantômes ont été supprimées
+      const removedCount = originalCount - block.corrections.length
+      if (removedCount > 0) {
+        console.log(`Bloc #${block.index}: ${removedCount} correction(s) fantôme(s) supprimée(s)`)
+      }
+    }
+  })
 }
 
 /**

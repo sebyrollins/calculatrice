@@ -300,6 +300,8 @@ RÈGLES STRICTES :
 3. Reason doit être courte et claire (max 60 caractères)
 4. Position = index du début de la correction dans le texte original
 5. Ne change PAS le sens ou le style, uniquement les erreurs
+6. IMPORTANT: Ne crée JAMAIS de correction où "original" === "corrected" (texte identique)
+7. Si un mot est déjà correct, ne le mets PAS dans les corrections
 
 TEXTE À CORRIGER :
 
