@@ -503,16 +503,17 @@ body {
 .sticky-stats {
   position: sticky;
   top: 0;
-  z-index: 300;
+  z-index: 200;
   background: var(--color-surface);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Action Bar - STICKY sous les stats */
+/* Action Bar - STICKY sous les stats (z-index supérieur pour rester visible) */
 .sticky-actions {
   position: sticky;
   top: var(--stats-height);
-  z-index: 200;
+  z-index: 300;
+  background: var(--color-surface);
 }
 
 /* Blocks Table */
@@ -941,9 +942,9 @@ body {
   background-color: #ffcdd2;
 }
 
-/* BLOCS AVEC DOUTES - Rouge brillant clair */
+/* BLOCS AVEC DOUTES - Orange clair */
 .block-row.row-has-doubt {
-  background-color: #ffcdd2;
+  background-color: #fff3e0;
 }
 
 /* Cellules */

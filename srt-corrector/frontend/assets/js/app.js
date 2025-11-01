@@ -440,6 +440,12 @@ function editCorrection(blockIndex, corrIndex) {
   const correction = block.corrections[corrIndex]
   if (!correction) return
 
+  // Sauvegarder la suggestion originale et le type original si pas déjà fait
+  if (!correction.hasOwnProperty('originalSuggestion')) {
+    correction.originalSuggestion = correction.corrected
+    correction.originalType = correction.type
+  }
+
   // Afficher le modal
   const modal = document.getElementById('editModal')
   const modalOriginal = document.getElementById('modalOriginal')
@@ -450,9 +456,9 @@ function editCorrection(blockIndex, corrIndex) {
   const modalCloseBtn = document.getElementById('modalCloseBtn')
   const modalOverlay = document.getElementById('modalOverlay')
 
-  // Remplir le modal
+  // Remplir le modal - la suggestion reste TOUJOURS la suggestion originale
   modalOriginal.textContent = correction.original
-  modalSuggestion.textContent = correction.corrected
+  modalSuggestion.textContent = correction.originalSuggestion
   modalInput.value = correction.corrected
   modal.style.display = 'flex'
   modalInput.focus()
@@ -473,18 +479,26 @@ function editCorrection(blockIndex, corrIndex) {
     const newValue = modalInput.value.trim()
 
     if (newValue && newValue !== correction.original) {
-      const originalCorrected = correction.corrected
+      const oldCorrected = correction.corrected
 
       // Mettre à jour la correction
       correction.corrected = newValue
 
       // Mettre à jour le texte du bloc
-      block.corrected = block.corrected.replace(originalCorrected, newValue)
+      block.corrected = block.corrected.replace(oldCorrected, newValue)
 
-      // Si la modification est différente de la suggestion, passer en mode "doubt"
-      if (newValue !== originalCorrected) {
+      // Vérifier si la modification est différente de la suggestion originale
+      if (newValue !== correction.originalSuggestion) {
+        // Modifié différemment → passer en mode "doubt"
         correction.type = 'doubt'
         correction.reason = 'Modifié manuellement'
+      } else {
+        // Remis comme la suggestion → repasser au type original
+        correction.type = correction.originalType
+        // Restaurer la raison originale si elle existe
+        if (correction.originalType !== 'doubt') {
+          delete correction.reason // La raison viendra de l'affichage normal
+        }
       }
 
       // Mettre à jour les stats et la jauge
@@ -616,7 +630,8 @@ function updateStats(stats) {
   // Calculer la progression (combien de corrections validées)
   const totalCorrections = stats.total
   const validatedCount = AppState.validatedCorrections.size
-  const progressPercent = totalCorrections > 0 ? Math.round((validatedCount / totalCorrections) * 100) : 0
+  // Si 0 erreur, c'est 100% de corrections faites (rien à corriger)
+  const progressPercent = totalCorrections > 0 ? Math.round((validatedCount / totalCorrections) * 100) : 100
 
   // Mettre à jour la jauge
   if (DOM.progressGaugeFill) {
