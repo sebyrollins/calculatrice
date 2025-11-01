@@ -51,11 +51,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
     <!-- Header -->
     <header class="app-header">
         <div class="container">
-            <h1 class="app-title">
-                <span class="icon">📝</span>
-                SRT Corrector Pro
-            </h1>
-            <p class="app-subtitle">Correction professionnelle de sous-titres avec IA</p>
+            <div class="header-content">
+                <img src="assets/images/logo.svg" alt="SebyRollins" class="header-logo">
+                <div class="header-text">
+                    <h1 class="app-title">
+                        <span class="icon">📝</span>
+                        SRT Corrector Pro
+                    </h1>
+                    <p class="app-subtitle">Correction professionnelle de sous-titres avec IA by SebyRollins 2025</p>
+                </div>
+            </div>
         </div>
     </header>
 

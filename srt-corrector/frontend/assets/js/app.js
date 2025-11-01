@@ -457,6 +457,21 @@ function validateSingleCorrection(blockIndex, corrIndex) {
 
   // Auto-scroll vers le prochain bloc non validé
   setTimeout(() => {
+    // D'abord vérifier si le bloc actuel a encore des corrections non validées
+    const currentBlock = AppState.blocks.find(b => b.index === blockIndex)
+    if (currentBlock && currentBlock.corrections) {
+      const hasUnvalidatedInCurrentBlock = currentBlock.corrections.some((c, idx) => {
+        const corrId = `${blockIndex}-${idx}`
+        return !AppState.validatedCorrections.has(corrId)
+      })
+
+      // Si le bloc actuel a encore des corrections, ne pas scroller
+      if (hasUnvalidatedInCurrentBlock) {
+        return
+      }
+    }
+
+    // Sinon, chercher le prochain bloc avec des corrections non validées
     const nextBlockIndex = findNextUnvalidatedBlock(blockIndex)
     if (nextBlockIndex !== null) {
       scrollToBlock(nextBlockIndex)
