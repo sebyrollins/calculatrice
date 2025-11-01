@@ -617,6 +617,7 @@ function editCorrection(blockIndex, corrIndex) {
   const modalCloseBtn = document.getElementById('modalCloseBtn')
   const modalOverlay = document.getElementById('modalOverlay')
   const modalRestoreBtn = document.getElementById('modalRestoreBtn')
+  const modalRestoreOriginalBtn = document.getElementById('modalRestoreOriginalBtn')
 
   // Remplir le modal - la suggestion reste TOUJOURS la suggestion originale
   modalOriginal.textContent = correction.original
@@ -625,6 +626,13 @@ function editCorrection(blockIndex, corrIndex) {
   modal.style.display = 'flex'
   modalInput.focus()
   modalInput.select()
+
+  // Fonction pour restaurer l'original (avec la faute)
+  const restoreOriginal = () => {
+    modalInput.value = correction.original
+    modalInput.focus()
+    modalInput.select()
+  }
 
   // Fonction pour restaurer la suggestion
   const restoreSuggestion = () => {
@@ -641,6 +649,7 @@ function editCorrection(blockIndex, corrIndex) {
     modalCloseBtn.onclick = null
     modalOverlay.onclick = null
     modalRestoreBtn.onclick = null
+    modalRestoreOriginalBtn.onclick = null
     modalInput.onkeydown = null
   }
 
@@ -689,6 +698,7 @@ function editCorrection(blockIndex, corrIndex) {
   modalCancelBtn.onclick = closeModal
   modalCloseBtn.onclick = closeModal
   modalOverlay.onclick = closeModal
+  modalRestoreOriginalBtn.onclick = restoreOriginal
   modalRestoreBtn.onclick = restoreSuggestion
 
   // Enter pour sauvegarder, Escape pour annuler

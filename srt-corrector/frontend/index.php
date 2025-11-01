@@ -147,33 +147,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
                 <!-- Statistics Bar with integrated buttons - STICKY -->
                 <div class="stats-bar sticky-stats" id="statsBar">
                     <div class="stats-group">
-                        <div class="stat-item stat-filter" data-filter="all">
-                            <span class="stat-label">Total</span>
-                            <span class="stat-value" id="statTotal">0</span>
+                        <div class="stat-item">
+                            <div class="stat-filter-zone stat-filter" data-filter="all">
+                                <span class="stat-label">Total</span>
+                                <span class="stat-value" id="statTotal">0</span>
+                            </div>
                             <button class="btn-stat btn-stat-secondary" id="validateAllBtn" title="Valider toutes les corrections">
                                 <span class="btn-icon">✓</span>
                                 Valider tout
                             </button>
                         </div>
-                        <div class="stat-item stat-minor stat-filter" data-filter="minor">
-                            <span class="stat-label">Mineures</span>
-                            <span class="stat-value" id="statMinor">0</span>
+                        <div class="stat-item stat-minor">
+                            <div class="stat-filter-zone stat-filter" data-filter="minor">
+                                <span class="stat-label">Mineures</span>
+                                <span class="stat-value" id="statMinor">0</span>
+                            </div>
                             <button class="btn-stat btn-stat-blue" id="validateMinorBtn" title="Valider les corrections mineures">
                                 <span class="btn-icon">✓</span>
                                 Valider
                             </button>
                         </div>
-                        <div class="stat-item stat-major stat-filter" data-filter="major">
-                            <span class="stat-label">Majeures</span>
-                            <span class="stat-value" id="statMajor">0</span>
+                        <div class="stat-item stat-major">
+                            <div class="stat-filter-zone stat-filter" data-filter="major">
+                                <span class="stat-label">Majeures</span>
+                                <span class="stat-value" id="statMajor">0</span>
+                            </div>
                             <button class="btn-stat btn-stat-success" id="validateMajorBtn" title="Valider les corrections majeures">
                                 <span class="btn-icon">✓</span>
                                 Valider
                             </button>
                         </div>
-                        <div class="stat-item stat-doubt stat-filter" data-filter="doubt">
-                            <span class="stat-label">Doutes</span>
-                            <span class="stat-value" id="statDoubt">0</span>
+                        <div class="stat-item stat-doubt">
+                            <div class="stat-filter-zone stat-filter" data-filter="doubt">
+                                <span class="stat-label">Doutes</span>
+                                <span class="stat-value" id="statDoubt">0</span>
+                            </div>
                             <button class="btn-stat btn-stat-warning" id="validateDoubtBtn" title="Valider les corrections avec doute">
                                 <span class="btn-icon">✓</span>
                                 Valider
@@ -253,9 +261,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
                     <div class="modal-field">
                         <label class="modal-label">Votre correction :</label>
                         <input type="text" class="modal-input" id="modalInput" />
-                        <button class="btn-restore-suggestion" id="modalRestoreBtn" title="Restaurer la suggestion de Claude">
-                            ↺ Restaurer la suggestion
-                        </button>
+                        <div class="modal-buttons-row">
+                            <button class="btn-restore-original" id="modalRestoreOriginalBtn" title="Restaurer le texte original avec l'erreur">
+                                ↶ Restaurer l'original
+                            </button>
+                            <button class="btn-restore-suggestion" id="modalRestoreBtn" title="Restaurer la suggestion de Claude">
+                                ↺ Restaurer la suggestion
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

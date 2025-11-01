@@ -446,14 +446,23 @@ body {
   gap: var(--spacing-sm);
 }
 
-.stat-filter {
-  cursor: pointer;
+.stat-filter-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
   transition: all 0.3s ease;
 }
 
+.stat-filter {
+  cursor: pointer;
+}
+
 .stat-filter:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  background: rgba(99, 102, 241, 0.1);
+  transform: scale(1.05);
 }
 
 .stat-filter.active {
@@ -1445,8 +1454,33 @@ body {
   border-color: var(--color-primary);
 }
 
-.btn-restore-suggestion {
+.modal-buttons-row {
+  display: flex;
+  gap: var(--spacing-xs);
   margin-top: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.btn-restore-original {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: transparent;
+  border: 1px solid var(--color-doubt);
+  color: var(--color-doubt);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-restore-original:hover {
+  background: var(--color-doubt);
+  color: white;
+}
+
+.btn-restore-suggestion {
   padding: var(--spacing-xs) var(--spacing-sm);
   background: transparent;
   border: 1px solid var(--color-primary);
