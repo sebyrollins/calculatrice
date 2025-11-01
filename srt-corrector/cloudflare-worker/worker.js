@@ -269,17 +269,17 @@ IMPORTANT : Retourne UNIQUEMENT un JSON valide (pas de markdown, pas de \`\`\`js
 
 CATÉGORISATION PROFESSIONNELLE (très important) :
 - "minor" : corrections typographiques et cosmétiques
-  * Apostrophes droites → courbes (' → ')
-  * Guillemets droits → guillemets français (" → « »)
-  * Trois points → points de suspension (... → …)
+  * Apostrophes droites → courbes : remplacer ' par ' (ex: "l'eau" → "l'eau")
+  * Guillemets droits → guillemets français : remplacer " par « » (ex: "bonjour" → « bonjour »)
+  * Trois points → points de suspension : remplacer ... par … (ex: "et..." → "et…")
   * Espaces doubles difficiles à voir
   * Espaces insécables avant ponctuation (: ; ! ?)
   * Micro-ajustements typographiques subtils
-  * Corrections cosmétiques invisibles à l'œil nu
+  * IMPORTANT: Ces corrections sont VISUELLEMENT invisibles mais techniquement différentes
 
 - "major" : corrections professionnelles visibles et certaines
   * Tirets manquants (rendez vous → rendez-vous)
-  * Apostrophes manquantes pour élision (c est → c'est, l eau → l'eau)
+  * Apostrophes MANQUANTES pour élision : AJOUTER une apostrophe (ex: "c est" → "c'est", "l eau" → "l'eau")
   * Fautes d'orthographe (language → langage)
   * Accord sujet-verbe (ils à fait → ils ont fait)
   * Conjugaison incorrecte (Il à pris → Il a pris)
@@ -300,8 +300,10 @@ RÈGLES STRICTES :
 3. Reason doit être courte et claire (max 60 caractères)
 4. Position = index du début de la correction dans le texte original
 5. Ne change PAS le sens ou le style, uniquement les erreurs
-6. IMPORTANT: Ne crée JAMAIS de correction où "original" === "corrected" (texte identique)
-7. Si un mot est déjà correct, ne le mets PAS dans les corrections
+6. IMPORTANT: Ne crée JAMAIS de correction où "original" et "corrected" sont EXACTEMENT identiques (même texte, même caractères)
+   - Exemple INVALIDE: original="Assemblée" corrected="Assemblée" (identiques ❌)
+   - Exemple VALIDE: original="l'eau" corrected="l'eau" (apostrophes différentes ✓)
+7. Les corrections typographiques (apostrophes ' → ', guillemets " → «», ... → …) sont VALIDES même si visuellement identiques
 
 TEXTE À CORRIGER :
 
