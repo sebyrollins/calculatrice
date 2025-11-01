@@ -37,7 +37,9 @@ const DOM = {
   downloadSrtBtn: null,
   downloadTxtBtn: null,
   newFileBtn: null,
-  blocksTableBody: null
+  blocksTableBody: null,
+  navigationMinimap: null,
+  minimapBlocks: null
 }
 
 /**
@@ -83,6 +85,8 @@ function initDOM() {
   DOM.downloadTxtBtn = document.getElementById('downloadTxtBtn')
   DOM.newFileBtn = document.getElementById('newFileBtn')
   DOM.blocksTableBody = document.getElementById('blocksTableBody')
+  DOM.navigationMinimap = document.getElementById('navigationMinimap')
+  DOM.minimapBlocks = document.getElementById('minimapBlocks')
 }
 
 /**
@@ -257,12 +261,20 @@ async function sendToWorker(content, filename) {
 function showEditor() {
   showSection('editor')
 
+  // Afficher la minimap
+  if (DOM.navigationMinimap) {
+    DOM.navigationMinimap.style.display = 'flex'
+  }
+
   // Calculer les statistiques
   const stats = SRTParser.calculateStats(AppState.blocks)
   updateStats(stats)
 
   // Afficher le tableau des blocs
   renderBlocksTable()
+
+  // Générer la minimap
+  renderMinimap()
 }
 
 /**
@@ -428,6 +440,7 @@ function validateSingleCorrection(blockIndex, corrIndex) {
 
   // Re-render pour mettre à jour le fond du bloc si toutes corrections validées
   renderBlocksTable()
+  updateMinimap()
 }
 
 /**
@@ -553,6 +566,7 @@ function validateCorrections(type) {
 
   // Re-render pour mettre à jour l'affichage
   renderBlocksTable()
+  updateMinimap()
 }
 
 /**
@@ -669,4 +683,98 @@ function handleFilterClick(event) {
 
   // Re-render le tableau avec le filtre
   renderBlocksTable()
+}
+
+/**
+ * Génère la minimap de navigation
+ */
+function renderMinimap() {
+  if (!DOM.minimapBlocks) return
+
+  DOM.minimapBlocks.innerHTML = ''
+
+  AppState.blocks.forEach(block => {
+    const minimapBlock = document.createElement('div')
+    minimapBlock.className = 'minimap-block'
+    minimapBlock.dataset.blockIndex = block.index
+    minimapBlock.dataset.blockLabel = `Bloc #${block.index}`
+
+    // Déterminer la classe selon l'état
+    const blockClass = getBlockMinimapClass(block)
+    minimapBlock.classList.add(blockClass)
+
+    // Clic pour scroller vers le bloc
+    minimapBlock.addEventListener('click', () => {
+      scrollToBlock(block.index)
+    })
+
+    DOM.minimapBlocks.appendChild(minimapBlock)
+  })
+}
+
+/**
+ * Détermine la classe CSS de la minimap pour un bloc
+ */
+function getBlockMinimapClass(block) {
+  // Vérifier si toutes les corrections sont validées
+  const allValidated = block.corrections && block.corrections.length > 0 &&
+    block.corrections.every((c, idx) => AppState.validatedCorrections.has(`${block.index}-${idx}`))
+
+  // Pas de correction ou tout validé → gris clair
+  if (!block.corrections || block.corrections.length === 0 || allValidated) {
+    return allValidated ? 'minimap-validated' : 'minimap-no-correction'
+  }
+
+  // Déterminer le type dominant
+  const hasDoubt = block.corrections.some(c => c.type === 'doubt')
+  const hasMajor = block.corrections.some(c => c.type === 'major')
+
+  if (hasDoubt) {
+    return 'minimap-doubt'
+  } else if (hasMajor) {
+    return 'minimap-major'
+  } else {
+    return 'minimap-minor'
+  }
+}
+
+/**
+ * Met à jour la minimap (appelé après validation)
+ */
+function updateMinimap() {
+  if (!DOM.minimapBlocks) return
+
+  AppState.blocks.forEach(block => {
+    const minimapBlock = DOM.minimapBlocks.querySelector(`[data-block-index="${block.index}"]`)
+    if (!minimapBlock) return
+
+    // Retirer toutes les classes d'état
+    minimapBlock.classList.remove('minimap-validated', 'minimap-no-correction', 'minimap-major', 'minimap-doubt', 'minimap-minor')
+
+    // Ajouter la nouvelle classe
+    const blockClass = getBlockMinimapClass(block)
+    minimapBlock.classList.add(blockClass)
+  })
+}
+
+/**
+ * Scroll vers un bloc spécifique
+ */
+function scrollToBlock(blockIndex) {
+  const blockRow = document.getElementById(`block-row-${blockIndex}`)
+  if (blockRow) {
+    blockRow.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    })
+
+    // Effet visuel temporaire
+    blockRow.style.transition = 'background-color 0.3s ease'
+    const originalBg = blockRow.style.backgroundColor
+    blockRow.style.backgroundColor = 'rgba(79, 70, 229, 0.1)'
+
+    setTimeout(() => {
+      blockRow.style.backgroundColor = originalBg
+    }, 1000)
+  }
 }
