@@ -197,7 +197,16 @@ async function correctWithClaude(blocks) {
   // Parse la réponse JSON de Claude
   try {
     const parsed = JSON.parse(content.trim())
-    return parsed.blocks || []
+    const correctedBlocks = parsed.blocks || []
+
+    // Réinjecter les timecodes depuis les blocs originaux
+    return correctedBlocks.map(correctedBlock => {
+      const originalBlock = blocks.find(b => b.index === correctedBlock.index)
+      return {
+        ...correctedBlock,
+        timecode: originalBlock ? originalBlock.timecode : 'undefined'
+      }
+    })
   } catch (e) {
     console.error('Erreur parsing réponse Claude:', e)
     console.error('Contenu reçu:', content)

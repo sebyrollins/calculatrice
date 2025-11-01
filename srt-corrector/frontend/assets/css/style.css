@@ -918,6 +918,11 @@ body {
   border-right: none;
 }
 
+/* Aligner les validations avec la section CORRIGÉ */
+.cell-validation > *:first-child {
+  margin-top: 4.5rem; /* Décaler pour aligner avec CORRIGÉ (header + ORIGINAL) */
+}
+
 /* Header de bloc */
 .block-header {
   display: flex;
@@ -947,8 +952,8 @@ body {
 }
 
 .block-original {
-  background: #fff9c4;
-  border: 1px solid #fff176;
+  background: #f8f9fa; /* Gris très clair au lieu de jaune */
+  border: 1px solid #e2e8f0;
 }
 
 .block-corrected {
@@ -963,8 +968,8 @@ body {
 }
 
 .block-corrected.block-unvalidated {
-  background: #e8f5e9; /* Vert de majeur (plus clair) pour les blocs non validés */
-  border: 1px solid #c8e6c9;
+  background: #81c784; /* Vert pétant pour les blocs non validés */
+  border: 1px solid #66bb6a;
 }
 
 .block-label {
@@ -1011,7 +1016,7 @@ body {
 .error-highlight {
   position: relative;
   border-radius: 2px;
-  padding: 2px 4px;
+  padding: 0; /* Pas de padding pour éviter les espaces aux extrémités */
   font-weight: 600;
 }
 
