@@ -231,25 +231,56 @@ async function processUploadedFile(content, filename) {
 
 /**
  * Nettoie les corrections "fantômes" où original === corrected
- * Ces faux positifs peuvent être générés par l'IA
+ * ET force les corrections typographiques que l'IA n'a pas appliquées
  */
 function cleanPhantomCorrections(blocks) {
   blocks.forEach(block => {
     if (block.corrections && block.corrections.length > 0) {
-      // Filtrer les corrections où original === corrected
       const originalCount = block.corrections.length
       const removed = []
 
       block.corrections = block.corrections.filter(correction => {
-        // Normaliser les chaînes pour comparer (NFD = décomposé)
+        // Normaliser les chaînes pour comparer (NFC = composé)
         const normalizedOriginal = correction.original.normalize('NFC').trim()
         const normalizedCorrected = correction.corrected.normalize('NFC').trim()
 
-        // Vérifier si identiques (en ignorant les variations Unicode)
+        // Si c'est une correction typographique (minor) et que les textes sont identiques,
+        // forcer la correction réelle
+        if (correction.type === 'minor' && normalizedOriginal === normalizedCorrected) {
+          // Appliquer les corrections typographiques que l'IA n'a pas faites
+          let fixed = correction.corrected
+
+          // Apostrophe droite → courbe
+          fixed = fixed.replace(/'/g, ''')
+
+          // Guillemets droits → français
+          // Pattern simple : "texte" → « texte »
+          fixed = fixed.replace(/"([^"]+)"/g, '« $1 »')
+
+          // Trois points → ellipsis
+          fixed = fixed.replace(/\.\.\./g, '…')
+
+          // Si après correction le texte est toujours identique, c'est un vrai fantôme
+          if (fixed === normalizedOriginal) {
+            removed.push({
+              original: correction.original,
+              corrected: correction.corrected,
+              type: correction.type,
+              reason: correction.reason + ' (phantom - vraiment identique)'
+            })
+            return false // Supprimer
+          }
+
+          // Sinon, appliquer la correction forcée
+          correction.corrected = fixed
+          console.log(`Bloc #${block.index}: Correction typographique forcée: "${correction.original}" → "${fixed}"`)
+          return true // Garder
+        }
+
+        // Pour les autres types (major, doubt), vérifier si vraiment identiques
         const isPhantom = normalizedOriginal === normalizedCorrected
 
         if (isPhantom) {
-          // Logger les détails de la correction supprimée
           removed.push({
             original: correction.original,
             corrected: correction.corrected,
