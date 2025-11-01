@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
     <header class="app-header">
         <div class="container">
             <div class="header-content">
-                <img src="assets/images/logo.svg" alt="SebyRollins" class="header-logo">
+                <img src="assets/images/logo.png" alt="SebyRollins" class="header-logo">
                 <div class="header-text">
                     <h1 class="app-title">
                         <span class="icon">📝</span>
