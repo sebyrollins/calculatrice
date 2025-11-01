@@ -898,6 +898,13 @@ body {
   border-left-color: var(--color-success);
 }
 
+/* Correction validée en doute - couleur orange spécifique */
+.validation-card.validation-doubt.validated {
+  background: #fff3e0;
+  border-left-color: var(--color-doubt);
+  opacity: 0.8;
+}
+
 .validation-header {
   display: flex;
   justify-content: space-between;
@@ -1273,6 +1280,13 @@ body {
   border-left-color: var(--color-success);
 }
 
+/* Correction validée en doute - couleur orange spécifique */
+.validation-card.validation-doubt.validated {
+  background: #fff3e0;
+  border-left-color: var(--color-doubt);
+  opacity: 0.8;
+}
+
 .validation-header {
   margin-bottom: 0.375rem;
 }
@@ -1578,15 +1592,15 @@ body {
 }
 
 .minimap-block.minimap-major {
-  background: #ffcdd2;
+  background: #ef5350;
 }
 
 .minimap-block.minimap-doubt {
-  background: #fff3e0;
+  background: #ff9800;
 }
 
 .minimap-block.minimap-minor {
-  background: #e3f2fd;
+  background: #42a5f5;
 }
 
 /* Tooltip au survol */

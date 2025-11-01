@@ -657,7 +657,8 @@ function editCorrection(blockIndex, corrIndex) {
   const saveEdit = () => {
     const newValue = modalInput.value.trim()
 
-    if (newValue && newValue !== correction.original) {
+    // Permettre d'enregistrer même si égal à l'original (pour pouvoir restaurer l'original comme modification en doute)
+    if (newValue) {
       const oldCorrected = correction.corrected
 
       // Mettre à jour la correction
@@ -667,9 +668,14 @@ function editCorrection(blockIndex, corrIndex) {
       block.corrected = block.corrected.replace(oldCorrected, newValue)
 
       // Vérifier si la modification est différente de la suggestion originale
-      if (newValue !== correction.originalSuggestion) {
+      // Comparer aussi les codes Unicode pour détecter les différences d'apostrophes
+      const isDifferentFromSuggestion = newValue !== correction.originalSuggestion
+
+      if (isDifferentFromSuggestion) {
         // Modifié différemment → passer TOUT LE BLOC en mode "doubt"
-        console.log(`Bloc #${block.index}: Modification manuelle détectée, passage de toutes les corrections en doute`)
+        console.log(`Bloc #${block.index}: Modification manuelle détectée`)
+        console.log(`  Nouveau: "${newValue}" (codes: ${Array.from(newValue).map(c => c.charCodeAt(0)).join(',')})`)
+        console.log(`  Suggestion: "${correction.originalSuggestion}" (codes: ${Array.from(correction.originalSuggestion).map(c => c.charCodeAt(0)).join(',')})`)
 
         // Passer TOUTES les corrections du bloc en "doubt"
         if (block.corrections && block.corrections.length > 0) {
