@@ -331,9 +331,11 @@ function renderBlocksTable() {
       }</div>
     `
 
-    // Corrigé (couleur différente si validé vs non validé)
+    // Corrigé (gras si validé ou pas de correction, fond vert si non validé avec corrections)
+    const hasNoCorrections = !block.corrections || block.corrections.length === 0
+    const shouldBeBold = hasNoCorrections || allValidated
     const correctedEl = document.createElement('div')
-    correctedEl.className = `block-section block-corrected ${allValidated ? 'block-validated' : 'block-unvalidated'}`
+    correctedEl.className = `block-section block-corrected ${shouldBeBold ? 'block-validated' : 'block-unvalidated'}`
     correctedEl.innerHTML = `
       <div class="block-label">CORRIGÉ :</div>
       <div class="block-content">${SRTParser.escapeHtml(block.corrected)}</div>

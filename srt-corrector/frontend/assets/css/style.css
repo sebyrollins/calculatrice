@@ -918,9 +918,9 @@ body {
   border-right: none;
 }
 
-/* Aligner les validations avec la section CORRIGÉ */
+/* Aligner les validations avec la section ORIGINAL */
 .cell-validation > *:first-child {
-  margin-top: 4.5rem; /* Décaler pour aligner avec CORRIGÉ (header + ORIGINAL) */
+  margin-top: 1.2rem; /* Décaler pour aligner avec ORIGINAL (juste après header) */
 }
 
 /* Header de bloc */
@@ -957,19 +957,23 @@ body {
 }
 
 .block-corrected {
-  background: #c8e6c9;
-  border: 1px solid #a5d6a7;
+  background: transparent;
+  border: 1px solid #e2e8f0;
 }
 
 /* Distinction validé vs non validé dans section CORRIGÉ */
 .block-corrected.block-validated {
-  background: #c8e6c9; /* Vert actuel pour les blocs validés */
-  border: 1px solid #a5d6a7;
+  background: transparent; /* Pas de fond pour les blocs validés */
+  border: 1px solid #e2e8f0;
+}
+
+.block-corrected.block-validated .block-content {
+  font-weight: 600; /* Texte en gras quand validé */
 }
 
 .block-corrected.block-unvalidated {
-  background: #81c784; /* Vert pétant pour les blocs non validés */
-  border: 1px solid #66bb6a;
+  background: var(--color-major-bg); /* Fond vert majeur pour blocs non validés */
+  border: 1px solid var(--color-major);
 }
 
 .block-label {

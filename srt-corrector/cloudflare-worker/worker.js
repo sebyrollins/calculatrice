@@ -242,10 +242,10 @@ IMPORTANT : Retourne UNIQUEMENT un JSON valide (pas de markdown, pas de \`\`\`js
       "corrected": "texte corrigé",
       "corrections": [
         {
-          "type": "minor",
-          "original": "c est",
-          "corrected": "c'est",
-          "reason": "Apostrophe typographique obligatoire",
+          "type": "major",
+          "original": "rendez vous",
+          "corrected": "rendez-vous",
+          "reason": "Tiret obligatoire",
           "position": 0
         }
       ]
@@ -253,24 +253,29 @@ IMPORTANT : Retourne UNIQUEMENT un JSON valide (pas de markdown, pas de \`\`\`js
   ]
 }
 
-CATÉGORISATION (très important) :
-- "minor" : corrections 100% sûres et mineures
-  * Apostrophes typographiques (c'est, l'eau, d'abord)
-  * Espaces avant ponctuation (pas d'espace avant . , - mais espace avant : ; ! ?)
-  * Ponctuation basique (virgules évidentes, points)
-  * Majuscules début de phrase
+CATÉGORISATION PROFESSIONNELLE (très important) :
+- "minor" : corrections mineures peu visibles (utiliser RAREMENT)
+  * Espaces doubles difficiles à voir
+  * Micro-ajustements typographiques subtils
+  * Corrections cosmétiques invisibles à l'œil nu
 
-- "major" : corrections majeures mais certaines
-  * Fautes d'orthographe évidentes (language → langage)
-  * Accord sujet-verbe évident
-  * Conjugaison claire
+- "major" : corrections professionnelles visibles et certaines
+  * Tirets manquants (rendez vous → rendez-vous)
+  * Apostrophes typographiques (c est → c'est, l eau → l'eau)
+  * Espaces avant ponctuation (pas d'espace avant . , - mais espace avant : ; ! ?)
+  * Fautes d'orthographe (language → langage)
+  * Accord sujet-verbe (ils à fait → ils ont fait)
+  * Conjugaison incorrecte (Il à pris → Il a pris)
   * Majuscules institutions/organisations
+  * Majuscules début de phrase
+  * Ponctuation manquante ou incorrecte
 
 - "doubt" : corrections avec ambiguïté possible
-  * Choix stylistiques
-  * Contexte ambigu
+  * Choix stylistiques subjectifs
+  * Contexte ambigu nécessitant interprétation
   * Plusieurs interprétations possibles
   * Liaison peut-être/peut être selon contexte
+  * Reformulations qui changent légèrement le sens
 
 RÈGLES STRICTES :
 1. Garde l'index exact du bloc original
