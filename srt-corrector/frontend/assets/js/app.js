@@ -681,27 +681,18 @@ function editCorrection(blockIndex, corrIndex) {
       const isDifferentFromSuggestion = newValue !== correction.originalSuggestion
 
       if (isDifferentFromSuggestion) {
-        // Modifié différemment → passer TOUT LE BLOC en mode "doubt"
-        console.log(`Bloc #${block.index}: Modification manuelle détectée`)
+        // Modifié différemment → passer SEULEMENT CETTE CORRECTION en mode "doubt"
+        console.log(`Bloc #${block.index}, correction #${corrIndex}: Modification manuelle détectée`)
         console.log(`  Nouveau: "${newValue}" (codes: ${Array.from(newValue).map(c => c.charCodeAt(0)).join(',')})`)
         console.log(`  Suggestion: "${correction.originalSuggestion}" (codes: ${Array.from(correction.originalSuggestion).map(c => c.charCodeAt(0)).join(',')})`)
 
-        // Passer TOUTES les corrections du bloc en "doubt"
-        if (block.corrections && block.corrections.length > 0) {
-          block.corrections.forEach((corr, idx) => {
-            // Sauvegarder le type original si pas déjà fait
-            if (!corr.hasOwnProperty('originalType')) {
-              corr.originalType = corr.type
-            }
-            // Passer en doute
-            corr.type = 'doubt'
-            if (idx === corrIndex) {
-              corr.reason = 'Modifié manuellement'
-            } else {
-              corr.reason = 'Bloc modifié manuellement'
-            }
-          })
+        // Sauvegarder le type original si pas déjà fait
+        if (!correction.hasOwnProperty('originalType')) {
+          correction.originalType = correction.type
         }
+        // Passer SEULEMENT cette correction en doute
+        correction.type = 'doubt'
+        correction.reason = 'Modifié manuellement'
       } else {
         // Remis comme la suggestion → repasser au type original
         correction.type = correction.originalType || 'major'
@@ -828,6 +819,12 @@ function resetApp() {
   AppState.originalFilename = null
   AppState.blocks = []
   AppState.validatedCorrections.clear()
+
+  // Reset filter state
+  AppState.activeFilter = null
+  document.querySelectorAll('.stat-filter').forEach(btn => {
+    btn.classList.remove('active')
+  })
 
   resetFileInput()
   showSection('upload')
