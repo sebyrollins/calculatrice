@@ -238,14 +238,25 @@ function cleanPhantomCorrections(blocks) {
     if (block.corrections && block.corrections.length > 0) {
       // Filtrer les corrections où original === corrected
       const originalCount = block.corrections.length
+      const removed = []
+
       block.corrections = block.corrections.filter(correction => {
-        return correction.original !== correction.corrected
+        const isPhantom = correction.original === correction.corrected
+        if (isPhantom) {
+          // Logger les détails de la correction supprimée
+          removed.push({
+            original: correction.original,
+            corrected: correction.corrected,
+            type: correction.type,
+            reason: correction.reason
+          })
+        }
+        return !isPhantom
       })
 
       // Log si des corrections fantômes ont été supprimées
-      const removedCount = originalCount - block.corrections.length
-      if (removedCount > 0) {
-        console.log(`Bloc #${block.index}: ${removedCount} correction(s) fantôme(s) supprimée(s)`)
+      if (removed.length > 0) {
+        console.log(`Bloc #${block.index}: ${removed.length} correction(s) fantôme(s) supprimée(s):`, removed)
       }
     }
   })
