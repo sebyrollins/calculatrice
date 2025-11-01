@@ -300,10 +300,13 @@ RÈGLES STRICTES :
 3. Reason doit être courte et claire (max 60 caractères)
 4. Position = index du début de la correction dans le texte original
 5. Ne change PAS le sens ou le style, uniquement les erreurs
-6. IMPORTANT: Ne crée JAMAIS de correction où "original" et "corrected" sont EXACTEMENT identiques (même texte, même caractères)
-   - Exemple INVALIDE: original="Assemblée" corrected="Assemblée" (identiques ❌)
-   - Exemple VALIDE: original="l'eau" corrected="l'eau" (apostrophes différentes ✓)
-7. Les corrections typographiques (apostrophes ' → ', guillemets " → «», ... → …) sont VALIDES même si visuellement identiques
+6. CRITIQUE: Le champ "original" doit contenir EXACTEMENT le texte du fichier original (sans modification)
+   - Si le fichier contient "l'eau" (apostrophe droite '), le champ original doit être "l'eau" (apostrophe droite ')
+   - Si le fichier contient "Assemblée", le champ original doit être "Assemblée" (même texte, même caractères)
+   - NE PAS corriger le texte dans le champ "original", garde-le TEL QUEL
+7. Le champ "corrected" contient la version corrigée
+   - Exemple: original="l'eau" corrected="l'eau" (apostrophe droite → courbe)
+8. Ne crée JAMAIS de correction où "original" et "corrected" sont identiques caractère par caractère
 
 TEXTE À CORRIGER :
 
