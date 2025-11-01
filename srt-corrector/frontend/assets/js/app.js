@@ -250,15 +250,14 @@ function cleanPhantomCorrections(blocks) {
           // Appliquer les corrections typographiques que l'IA n'a pas faites
           let fixed = correction.corrected
 
-          // Apostrophe droite → courbe
-          fixed = fixed.replace(/'/g, ''')
+          // Apostrophe droite → courbe (U+2019)
+          fixed = fixed.replace(/'/g, '\u2019')
 
           // Guillemets droits → français
-          // Pattern simple : "texte" → « texte »
-          fixed = fixed.replace(/"([^"]+)"/g, '« $1 »')
+          fixed = fixed.replace(/"([^"]+)"/g, '\u00AB $1 \u00BB')
 
-          // Trois points → ellipsis
-          fixed = fixed.replace(/\.\.\./g, '…')
+          // Trois points → ellipsis (U+2026)
+          fixed = fixed.replace(/\.\.\./g, '\u2026')
 
           // Si après correction le texte est toujours identique, c'est un vrai fantôme
           if (fixed === normalizedOriginal) {
