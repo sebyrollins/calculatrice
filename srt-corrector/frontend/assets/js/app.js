@@ -210,7 +210,8 @@ async function processUploadedFile(content, filename) {
     updateProgress(90, 'Traitement des résultats...')
 
     // Nettoyer les corrections fantômes (où original === corrected)
-    cleanPhantomCorrections(correctedBlocks)
+    // TEMPORAIREMENT DÉSACTIVÉ POUR DEBUG
+    // cleanPhantomCorrections(correctedBlocks)
 
     // Sauvegarder les blocs
     AppState.blocks = correctedBlocks
