@@ -116,9 +116,10 @@ const SRTParser = {
         const after = result.substring(endPos)
 
         // Créer le span de correction
+        // IMPORTANT: Échapper before et after pour éviter les problèmes HTML
         const highlighted = `<span class="correction correction-${type}" data-original="${this.escapeHtml(original)}" data-corrected="${this.escapeHtml(corrected)}">${this.escapeHtml(corrected)}</span>`
 
-        result = before + highlighted + after
+        result = this.escapeHtml(before) + highlighted + this.escapeHtml(after)
       }
     })
 
@@ -154,9 +155,10 @@ const SRTParser = {
         const after = result.substring(endPos)
 
         // Créer le span de surlignage SANS remplacer le texte
+        // IMPORTANT: Échapper before et after pour éviter les problèmes HTML
         const highlighted = `<span class="error-highlight error-highlight-${type}">${this.escapeHtml(errorText)}</span>`
 
-        result = before + highlighted + after
+        result = this.escapeHtml(before) + highlighted + this.escapeHtml(after)
       }
     })
 
