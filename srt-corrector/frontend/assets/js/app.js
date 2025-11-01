@@ -515,6 +515,9 @@ function editCorrection(blockIndex, corrIndex) {
   const correction = block.corrections[corrIndex]
   if (!correction) return
 
+  // ID de correction pour validation
+  const correctionId = `${blockIndex}-${corrIndex}`
+
   // Sauvegarder la suggestion originale, le type original et la raison originale si pas déjà fait
   if (!correction.hasOwnProperty('originalSuggestion')) {
     correction.originalSuggestion = correction.corrected
@@ -584,6 +587,9 @@ function editCorrection(blockIndex, corrIndex) {
         correction.reason = correction.originalReason
       }
 
+      // Marquer la correction comme validée
+      AppState.validatedCorrections.add(correctionId)
+
       // Mettre à jour les stats et la jauge
       const stats = SRTParser.calculateStats(AppState.blocks)
       updateStats(stats)
@@ -615,7 +621,7 @@ function editCorrection(blockIndex, corrIndex) {
 }
 
 /**
- * Rejette une correction et la convertit en doute
+ * Rejette une correction et la convertit en doute validé
  */
 function rejectCorrection(blockIndex, corrIndex) {
   const block = AppState.blocks.find(b => b.index === blockIndex)
@@ -633,9 +639,9 @@ function rejectCorrection(blockIndex, corrIndex) {
   // Convertir en doute
   correction.type = 'doubt'
 
-  // Si la correction était validée, la retirer des validations
+  // Marquer la correction comme validée (en tant que doute)
   const correctionId = `${blockIndex}-${corrIndex}`
-  AppState.validatedCorrections.delete(correctionId)
+  AppState.validatedCorrections.add(correctionId)
 
   // Mettre à jour les stats et la jauge
   const stats = SRTParser.calculateStats(AppState.blocks)
@@ -751,9 +757,52 @@ function updateStats(stats) {
   // Si 0 erreur, c'est 100% de corrections faites (rien à corriger)
   const progressPercent = totalCorrections > 0 ? Math.round((validatedCount / totalCorrections) * 100) : 100
 
-  // Mettre à jour la jauge
+  // Calculer combien de corrections validées sont en mode "doubt"
+  let validatedDoubtCount = 0
+  let validatedNonDoubtCount = 0
+
+  AppState.blocks.forEach(block => {
+    if (!block.corrections) return
+    block.corrections.forEach((correction, corrIndex) => {
+      const correctionId = `${block.index}-${corrIndex}`
+      if (AppState.validatedCorrections.has(correctionId)) {
+        if (correction.type === 'doubt') {
+          validatedDoubtCount++
+        } else {
+          validatedNonDoubtCount++
+        }
+      }
+    })
+  })
+
+  // Calculer les pourcentages pour chaque portion
+  const nonDoubtPercent = totalCorrections > 0 ? (validatedNonDoubtCount / totalCorrections) * 100 : 0
+  const doubtPercent = totalCorrections > 0 ? (validatedDoubtCount / totalCorrections) * 100 : 0
+
+  // Mettre à jour la jauge avec gradient
   if (DOM.progressGaugeFill) {
     DOM.progressGaugeFill.style.width = `${progressPercent}%`
+
+    // Appliquer le gradient uniquement si on a des corrections validées
+    if (validatedCount > 0) {
+      // Calculer la proportion de chaque couleur dans la barre
+      const nonDoubtProportion = (validatedNonDoubtCount / validatedCount) * 100
+      const doubtProportion = (validatedDoubtCount / validatedCount) * 100
+
+      if (validatedDoubtCount > 0 && validatedNonDoubtCount > 0) {
+        // Les deux types sont présents - utiliser un gradient
+        DOM.progressGaugeFill.style.background = `linear-gradient(to right, #10b981 0%, #10b981 ${nonDoubtProportion}%, #f59e0b ${nonDoubtProportion}%, #f59e0b 100%)`
+      } else if (validatedDoubtCount > 0) {
+        // Seulement des doutes - orange
+        DOM.progressGaugeFill.style.background = '#f59e0b'
+      } else {
+        // Seulement des non-doutes - vert
+        DOM.progressGaugeFill.style.background = '#10b981'
+      }
+    } else {
+      // Aucune correction validée - couleur par défaut
+      DOM.progressGaugeFill.style.background = '#10b981'
+    }
   }
   if (DOM.progressGaugeValue) {
     DOM.progressGaugeValue.textContent = `${progressPercent}%`
