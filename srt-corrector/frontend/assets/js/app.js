@@ -668,9 +668,25 @@ function editCorrection(blockIndex, corrIndex) {
 
       // Vérifier si la modification est différente de la suggestion originale
       if (newValue !== correction.originalSuggestion) {
-        // Modifié différemment → passer en mode "doubt"
-        correction.type = 'doubt'
-        correction.reason = 'Modifié manuellement'
+        // Modifié différemment → passer TOUT LE BLOC en mode "doubt"
+        console.log(`Bloc #${block.index}: Modification manuelle détectée, passage de toutes les corrections en doute`)
+
+        // Passer TOUTES les corrections du bloc en "doubt"
+        if (block.corrections && block.corrections.length > 0) {
+          block.corrections.forEach((corr, idx) => {
+            // Sauvegarder le type original si pas déjà fait
+            if (!corr.hasOwnProperty('originalType')) {
+              corr.originalType = corr.type
+            }
+            // Passer en doute
+            corr.type = 'doubt'
+            if (idx === corrIndex) {
+              corr.reason = 'Modifié manuellement'
+            } else {
+              corr.reason = 'Bloc modifié manuellement'
+            }
+          })
+        }
       } else {
         // Remis comme la suggestion → repasser au type original
         correction.type = correction.originalType || 'major'
