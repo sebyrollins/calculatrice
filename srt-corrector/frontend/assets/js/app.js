@@ -515,10 +515,11 @@ function editCorrection(blockIndex, corrIndex) {
   const correction = block.corrections[corrIndex]
   if (!correction) return
 
-  // Sauvegarder la suggestion originale et le type original si pas déjà fait
+  // Sauvegarder la suggestion originale, le type original et la raison originale si pas déjà fait
   if (!correction.hasOwnProperty('originalSuggestion')) {
     correction.originalSuggestion = correction.corrected
     correction.originalType = correction.type
+    correction.originalReason = correction.reason
   }
 
   // Afficher le modal
@@ -530,6 +531,7 @@ function editCorrection(blockIndex, corrIndex) {
   const modalCancelBtn = document.getElementById('modalCancelBtn')
   const modalCloseBtn = document.getElementById('modalCloseBtn')
   const modalOverlay = document.getElementById('modalOverlay')
+  const modalRestoreBtn = document.getElementById('modalRestoreBtn')
 
   // Remplir le modal - la suggestion reste TOUJOURS la suggestion originale
   modalOriginal.textContent = correction.original
@@ -539,6 +541,13 @@ function editCorrection(blockIndex, corrIndex) {
   modalInput.focus()
   modalInput.select()
 
+  // Fonction pour restaurer la suggestion
+  const restoreSuggestion = () => {
+    modalInput.value = correction.originalSuggestion
+    modalInput.focus()
+    modalInput.select()
+  }
+
   // Fonction pour fermer le modal
   const closeModal = () => {
     modal.style.display = 'none'
@@ -546,6 +555,7 @@ function editCorrection(blockIndex, corrIndex) {
     modalCancelBtn.onclick = null
     modalCloseBtn.onclick = null
     modalOverlay.onclick = null
+    modalRestoreBtn.onclick = null
     modalInput.onkeydown = null
   }
 
@@ -569,11 +579,9 @@ function editCorrection(blockIndex, corrIndex) {
         correction.reason = 'Modifié manuellement'
       } else {
         // Remis comme la suggestion → repasser au type original
-        correction.type = correction.originalType
-        // Restaurer la raison originale si elle existe
-        if (correction.originalType !== 'doubt') {
-          delete correction.reason // La raison viendra de l'affichage normal
-        }
+        correction.type = correction.originalType || 'major'
+        // Restaurer la raison originale
+        correction.reason = correction.originalReason
       }
 
       // Mettre à jour les stats et la jauge
@@ -582,6 +590,7 @@ function editCorrection(blockIndex, corrIndex) {
 
       // Re-render
       renderBlocksTable()
+      updateMinimap()
     }
 
     closeModal()
@@ -592,6 +601,7 @@ function editCorrection(blockIndex, corrIndex) {
   modalCancelBtn.onclick = closeModal
   modalCloseBtn.onclick = closeModal
   modalOverlay.onclick = closeModal
+  modalRestoreBtn.onclick = restoreSuggestion
 
   // Enter pour sauvegarder, Escape pour annuler
   modalInput.onkeydown = (e) => {

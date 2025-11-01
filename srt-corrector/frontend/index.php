@@ -254,6 +254,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
                     <div class="modal-field">
                         <label class="modal-label">Votre correction :</label>
                         <input type="text" class="modal-input" id="modalInput" />
+                        <button class="btn-restore-suggestion" id="modalRestoreBtn" title="Restaurer la suggestion de Claude">
+                            ↺ Restaurer la suggestion
+                        </button>
                     </div>
                 </div>
                 <div class="modal-footer">
