@@ -230,12 +230,16 @@ MISSION : Corrige ce texte de sous-titres SRT en respectant scrupuleusement :
     - "l'assemblée nationale" → "l'Assemblée nationale"
     - "le sénat" → "le Sénat"
     - "le parlement européen" → "le Parlement européen"
-    - Règle générale : Premier mot en MAJUSCULE, reste en minuscule (ex: "Organisation mondiale de la santé")
-    - Règle MINISTÈRES (importante) :
+    - Règle MINISTÈRES UNIQUEMENT (importante) :
       * "ministère" reste en minuscule
       * Premier mot de CHAQUE secteur en majuscule
       * Exemple : "le ministère de la Transition écologique, de la Biodiversité et des Négociations internationales"
       * Autre exemple : "le ministère de l'Économie, des Finances et de la Souveraineté industrielle"
+    - Règle AUTRES INSTITUTIONS (agences, autorités, etc.) :
+      * Seul le premier mot significatif prend une majuscule, le reste en minuscule
+      * Exemple : "l'Agence nationale de la cohésion des territoires" (PAS "de la Cohésion")
+      * Exemple : "l'Autorité de régulation des communications électroniques"
+      * Exemple : "l'Organisation mondiale de la santé"
   * Espaces insécables avant : ; ! ? (espace fine)
   * Apostrophes typographiques ' (pas ')
   * Espaces insécables pour les milliers : 10 000 (SAUF années : 2024)
