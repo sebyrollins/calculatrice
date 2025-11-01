@@ -210,8 +210,7 @@ async function processUploadedFile(content, filename) {
     updateProgress(90, 'Traitement des résultats...')
 
     // Nettoyer les corrections fantômes (où original === corrected)
-    // TEMPORAIREMENT DÉSACTIVÉ POUR DEBUG
-    // cleanPhantomCorrections(correctedBlocks)
+    cleanPhantomCorrections(correctedBlocks)
 
     // Sauvegarder les blocs
     AppState.blocks = correctedBlocks
@@ -242,14 +241,24 @@ function cleanPhantomCorrections(blocks) {
       const removed = []
 
       block.corrections = block.corrections.filter(correction => {
-        const isPhantom = correction.original === correction.corrected
+        // Normaliser les chaînes pour comparer (NFD = décomposé)
+        const normalizedOriginal = correction.original.normalize('NFC').trim()
+        const normalizedCorrected = correction.corrected.normalize('NFC').trim()
+
+        // Vérifier si identiques (en ignorant les variations Unicode)
+        const isPhantom = normalizedOriginal === normalizedCorrected
+
         if (isPhantom) {
           // Logger les détails de la correction supprimée
           removed.push({
             original: correction.original,
             corrected: correction.corrected,
             type: correction.type,
-            reason: correction.reason
+            reason: correction.reason,
+            originalLength: correction.original.length,
+            correctedLength: correction.corrected.length,
+            originalCodes: Array.from(correction.original).map(c => c.charCodeAt(0)),
+            correctedCodes: Array.from(correction.corrected).map(c => c.charCodeAt(0))
           })
         }
         return !isPhantom
