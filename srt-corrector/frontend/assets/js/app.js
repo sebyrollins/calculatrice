@@ -275,6 +275,13 @@ function showEditor() {
 
   // Générer la minimap
   renderMinimap()
+
+  // Mettre à jour la position actuelle dans la minimap
+  updateMinimapCurrentPosition()
+
+  // Écouter le scroll pour mettre à jour la position actuelle
+  window.removeEventListener('scroll', onScrollThrottled) // Éviter les doublons
+  window.addEventListener('scroll', onScrollThrottled)
 }
 
 /**
@@ -413,8 +420,14 @@ function renderBlocksTable() {
           editBtn.innerHTML = '<span class="btn-icon">✏️</span> Modifier'
           editBtn.onclick = () => editCorrection(block.index, corrIndex)
 
+          const rejectBtn = document.createElement('button')
+          rejectBtn.className = 'btn btn-danger'
+          rejectBtn.innerHTML = '<span class="btn-icon">✕</span> Rejeter'
+          rejectBtn.onclick = () => rejectCorrection(block.index, corrIndex)
+
           actionsEl.appendChild(validateBtn)
           actionsEl.appendChild(editBtn)
+          actionsEl.appendChild(rejectBtn)
 
           cardEl.appendChild(actionsEl)
           validationCell.appendChild(cardEl)
@@ -540,6 +553,38 @@ function editCorrection(blockIndex, corrIndex) {
       closeModal()
     }
   }
+}
+
+/**
+ * Rejette une correction et la convertit en doute
+ */
+function rejectCorrection(blockIndex, corrIndex) {
+  const block = AppState.blocks.find(b => b.index === blockIndex)
+  if (!block) return
+
+  const correction = block.corrections[corrIndex]
+  if (!correction) return
+
+  // Sauvegarder la suggestion originale si pas déjà fait
+  if (!correction.hasOwnProperty('originalSuggestion')) {
+    correction.originalSuggestion = correction.corrected
+    correction.originalType = correction.type
+  }
+
+  // Convertir en doute
+  correction.type = 'doubt'
+
+  // Si la correction était validée, la retirer des validations
+  const correctionId = `${blockIndex}-${corrIndex}`
+  AppState.validatedCorrections.delete(correctionId)
+
+  // Mettre à jour les stats et la jauge
+  const stats = SRTParser.calculateStats(AppState.blocks)
+  updateStats(stats)
+
+  // Re-render pour mettre à jour l'affichage avec couleur orange
+  renderBlocksTable()
+  updateMinimap()
 }
 
 /**
@@ -776,5 +821,62 @@ function scrollToBlock(blockIndex) {
     setTimeout(() => {
       blockRow.style.backgroundColor = originalBg
     }, 1000)
+
+    // Mettre à jour la position actuelle dans la minimap après le scroll
+    setTimeout(() => {
+      updateMinimapCurrentPosition()
+    }, 500)
   }
+}
+
+/**
+ * Met à jour l'indicateur de position actuelle dans la minimap
+ */
+function updateMinimapCurrentPosition() {
+  if (!DOM.minimapBlocks) return
+
+  // Retirer l'ancienne classe current
+  const oldCurrent = DOM.minimapBlocks.querySelector('.minimap-current')
+  if (oldCurrent) {
+    oldCurrent.classList.remove('minimap-current')
+  }
+
+  // Trouver le bloc visible au centre de l'écran
+  const viewportCenter = window.scrollY + (window.innerHeight / 2)
+
+  let closestBlock = null
+  let closestDistance = Infinity
+
+  AppState.blocks.forEach(block => {
+    const blockRow = document.getElementById(`block-row-${block.index}`)
+    if (blockRow) {
+      const rect = blockRow.getBoundingClientRect()
+      const blockCenter = window.scrollY + rect.top + (rect.height / 2)
+      const distance = Math.abs(blockCenter - viewportCenter)
+
+      if (distance < closestDistance) {
+        closestDistance = distance
+        closestBlock = block
+      }
+    }
+  })
+
+  // Ajouter la classe current au bloc le plus proche
+  if (closestBlock) {
+    const minimapBlock = DOM.minimapBlocks.querySelector(`[data-block-index="${closestBlock.index}"]`)
+    if (minimapBlock) {
+      minimapBlock.classList.add('minimap-current')
+    }
+  }
+}
+
+// Throttle pour éviter trop d'appels lors du scroll
+let scrollTimeout = null
+function onScrollThrottled() {
+  if (scrollTimeout) return
+
+  scrollTimeout = setTimeout(() => {
+    updateMinimapCurrentPosition()
+    scrollTimeout = null
+  }, 100)
 }
