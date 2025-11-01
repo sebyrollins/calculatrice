@@ -99,29 +99,32 @@ const SRTParser = {
       return this.escapeHtml(text)
     }
 
-    // Trier les corrections par position (du plus grand au plus petit pour éviter les décalages)
-    const sortedCorrections = [...corrections].sort((a, b) => b.position - a.position)
+    // Trier les corrections par position (du plus petit au plus grand)
+    const sortedCorrections = [...corrections].sort((a, b) => a.position - b.position)
 
-    let result = text
+    // Construire le résultat en une seule passe pour éviter le double échappement
+    let result = ''
+    let lastIndex = 0
 
     sortedCorrections.forEach(correction => {
       const { original, corrected, type, position } = correction
-
-      // Trouver la position exacte de la correction
       const startPos = position
       const endPos = startPos + original.length
 
-      if (startPos >= 0 && endPos <= result.length) {
-        const before = result.substring(0, startPos)
-        const after = result.substring(endPos)
+      if (startPos >= lastIndex && endPos <= text.length) {
+        // Ajouter le texte avant la correction (échappé)
+        result += this.escapeHtml(text.substring(lastIndex, startPos))
 
-        // Créer le span de correction
-        // IMPORTANT: Échapper before et after pour éviter les problèmes HTML
-        const highlighted = `<span class="correction correction-${type}" data-original="${this.escapeHtml(original)}" data-corrected="${this.escapeHtml(corrected)}">${this.escapeHtml(corrected)}</span>`
+        // Ajouter la correction surlignée
+        result += `<span class="correction correction-${type}" data-original="${this.escapeHtml(original)}" data-corrected="${this.escapeHtml(corrected)}">${this.escapeHtml(corrected)}</span>`
 
-        result = this.escapeHtml(before) + highlighted + this.escapeHtml(after)
+        // Mettre à jour la position
+        lastIndex = endPos
       }
     })
+
+    // Ajouter le reste du texte après la dernière correction (échappé)
+    result += this.escapeHtml(text.substring(lastIndex))
 
     return result
   },
@@ -137,30 +140,33 @@ const SRTParser = {
       return this.escapeHtml(text)
     }
 
-    // Trier les corrections par position (du plus grand au plus petit pour éviter les décalages)
-    const sortedCorrections = [...corrections].sort((a, b) => b.position - a.position)
+    // Trier les corrections par position (du plus petit au plus grand)
+    const sortedCorrections = [...corrections].sort((a, b) => a.position - b.position)
 
-    let result = text
+    // Construire le résultat en une seule passe pour éviter le double échappement
+    let result = ''
+    let lastIndex = 0
 
     sortedCorrections.forEach(correction => {
       const { original, type, position } = correction
-
-      // Trouver la position exacte de l'erreur
       const startPos = position
       const endPos = startPos + original.length
 
-      if (startPos >= 0 && endPos <= result.length) {
-        const before = result.substring(0, startPos)
-        const errorText = result.substring(startPos, endPos)
-        const after = result.substring(endPos)
+      if (startPos >= lastIndex && endPos <= text.length) {
+        // Ajouter le texte avant l'erreur (échappé)
+        result += this.escapeHtml(text.substring(lastIndex, startPos))
 
-        // Créer le span de surlignage SANS remplacer le texte
-        // IMPORTANT: Échapper before et after pour éviter les problèmes HTML
-        const highlighted = `<span class="error-highlight error-highlight-${type}">${this.escapeHtml(errorText)}</span>`
+        // Ajouter l'erreur surlignée (texte échappé dans un span)
+        const errorText = text.substring(startPos, endPos)
+        result += `<span class="error-highlight error-highlight-${type}">${this.escapeHtml(errorText)}</span>`
 
-        result = this.escapeHtml(before) + highlighted + this.escapeHtml(after)
+        // Mettre à jour la position
+        lastIndex = endPos
       }
     })
+
+    // Ajouter le reste du texte après la dernière erreur (échappé)
+    result += this.escapeHtml(text.substring(lastIndex))
 
     return result
   },
