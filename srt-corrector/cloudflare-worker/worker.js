@@ -225,7 +225,12 @@ function buildPrompt(blocks) {
 MISSION : Corrige ce texte de sous-titres SRT en respectant scrupuleusement :
 - Orthographe, grammaire, conjugaison, ponctuation
 - Typographie française professionnelle :
-  * Majuscules pour les noms d'institutions (ex: "Organisation mondiale de la Santé")
+  * Majuscules pour les institutions DÉFINIES :
+    - "le gouvernement" → "le Gouvernement" (quand = institution française actuelle)
+    - "l'assemblée nationale" → "l'Assemblée nationale"
+    - "le sénat" → "le Sénat"
+    - "le parlement européen" → "le Parlement européen"
+    - Règle : Premier mot en MAJUSCULE, reste en minuscule (ex: "Organisation mondiale de la santé")
   * Espaces insécables avant : ; ! ? (espace fine)
   * Apostrophes typographiques ' (pas ')
   * Espaces insécables pour les milliers : 10 000 (SAUF années : 2024)
@@ -266,7 +271,7 @@ CATÉGORISATION PROFESSIONNELLE (très important) :
   * Fautes d'orthographe (language → langage)
   * Accord sujet-verbe (ils à fait → ils ont fait)
   * Conjugaison incorrecte (Il à pris → Il a pris)
-  * Majuscules institutions/organisations
+  * Majuscules institutions définies (le gouvernement → le Gouvernement)
   * Majuscules début de phrase
   * Ponctuation manquante ou incorrecte
 

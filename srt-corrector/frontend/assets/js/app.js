@@ -29,6 +29,8 @@ const DOM = {
   statMinor: null,
   statMajor: null,
   statDoubt: null,
+  progressGaugeFill: null,
+  progressGaugeValue: null,
   validateAllBtn: null,
   validateMajorBtn: null,
   validateDoubtBtn: null,
@@ -72,6 +74,8 @@ function initDOM() {
   DOM.statMinor = document.getElementById('statMinor')
   DOM.statMajor = document.getElementById('statMajor')
   DOM.statDoubt = document.getElementById('statDoubt')
+  DOM.progressGaugeFill = document.getElementById('progressGaugeFill')
+  DOM.progressGaugeValue = document.getElementById('progressGaugeValue')
   DOM.validateAllBtn = document.getElementById('validateAllBtn')
   DOM.validateMajorBtn = document.getElementById('validateMajorBtn')
   DOM.validateDoubtBtn = document.getElementById('validateDoubtBtn')
@@ -418,12 +422,16 @@ function validateSingleCorrection(blockIndex, corrIndex) {
   const correctionId = `${blockIndex}-${corrIndex}`
   AppState.validatedCorrections.add(correctionId)
 
+  // Mettre à jour les stats et la jauge
+  const stats = SRTParser.calculateStats(AppState.blocks)
+  updateStats(stats)
+
   // Re-render pour mettre à jour le fond du bloc si toutes corrections validées
   renderBlocksTable()
 }
 
 /**
- * Édite une correction
+ * Édite une correction avec modal moderne
  */
 function editCorrection(blockIndex, corrIndex) {
   const block = AppState.blocks.find(b => b.index === blockIndex)
@@ -432,21 +440,78 @@ function editCorrection(blockIndex, corrIndex) {
   const correction = block.corrections[corrIndex]
   if (!correction) return
 
-  const newValue = prompt(
-    `Modifier la correction :\n\nOriginal : ${correction.original}\nCorrigé : ${correction.corrected}\n\nNouveau texte :`,
-    correction.corrected
-  )
+  // Afficher le modal
+  const modal = document.getElementById('editModal')
+  const modalOriginal = document.getElementById('modalOriginal')
+  const modalSuggestion = document.getElementById('modalSuggestion')
+  const modalInput = document.getElementById('modalInput')
+  const modalSaveBtn = document.getElementById('modalSaveBtn')
+  const modalCancelBtn = document.getElementById('modalCancelBtn')
+  const modalCloseBtn = document.getElementById('modalCloseBtn')
+  const modalOverlay = document.getElementById('modalOverlay')
 
-  if (newValue !== null && newValue !== correction.corrected) {
-    // Mettre à jour la correction
-    correction.corrected = newValue
+  // Remplir le modal
+  modalOriginal.textContent = correction.original
+  modalSuggestion.textContent = correction.corrected
+  modalInput.value = correction.corrected
+  modal.style.display = 'flex'
+  modalInput.focus()
+  modalInput.select()
 
-    // Mettre à jour le texte du bloc
-    block.corrected = block.corrected.replace(correction.corrected, newValue)
+  // Fonction pour fermer le modal
+  const closeModal = () => {
+    modal.style.display = 'none'
+    modalSaveBtn.onclick = null
+    modalCancelBtn.onclick = null
+    modalCloseBtn.onclick = null
+    modalOverlay.onclick = null
+    modalInput.onkeydown = null
+  }
 
-    // Re-render
-    renderCorrectedText()
-    renderValidations()
+  // Fonction pour sauvegarder
+  const saveEdit = () => {
+    const newValue = modalInput.value.trim()
+
+    if (newValue && newValue !== correction.original) {
+      const originalCorrected = correction.corrected
+
+      // Mettre à jour la correction
+      correction.corrected = newValue
+
+      // Mettre à jour le texte du bloc
+      block.corrected = block.corrected.replace(originalCorrected, newValue)
+
+      // Si la modification est différente de la suggestion, passer en mode "doubt"
+      if (newValue !== originalCorrected) {
+        correction.type = 'doubt'
+        correction.reason = 'Modifié manuellement'
+      }
+
+      // Mettre à jour les stats et la jauge
+      const stats = SRTParser.calculateStats(AppState.blocks)
+      updateStats(stats)
+
+      // Re-render
+      renderBlocksTable()
+    }
+
+    closeModal()
+  }
+
+  // Événements
+  modalSaveBtn.onclick = saveEdit
+  modalCancelBtn.onclick = closeModal
+  modalCloseBtn.onclick = closeModal
+  modalOverlay.onclick = closeModal
+
+  // Enter pour sauvegarder, Escape pour annuler
+  modalInput.onkeydown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      saveEdit()
+    } else if (e.key === 'Escape') {
+      closeModal()
+    }
   }
 }
 
@@ -467,6 +532,10 @@ function validateCorrections(type) {
       }
     })
   })
+
+  // Mettre à jour les stats et la jauge
+  const stats = SRTParser.calculateStats(AppState.blocks)
+  updateStats(stats)
 
   // Re-render pour mettre à jour l'affichage
   renderBlocksTable()
@@ -536,13 +605,26 @@ function updateProgress(percent, text) {
 }
 
 /**
- * Met à jour les statistiques
+ * Met à jour les statistiques et la jauge de progression
  */
 function updateStats(stats) {
   if (DOM.statTotal) DOM.statTotal.textContent = stats.total
   if (DOM.statMinor) DOM.statMinor.textContent = stats.minor
   if (DOM.statMajor) DOM.statMajor.textContent = stats.major
   if (DOM.statDoubt) DOM.statDoubt.textContent = stats.doubt
+
+  // Calculer la progression (combien de corrections validées)
+  const totalCorrections = stats.total
+  const validatedCount = AppState.validatedCorrections.size
+  const progressPercent = totalCorrections > 0 ? Math.round((validatedCount / totalCorrections) * 100) : 0
+
+  // Mettre à jour la jauge
+  if (DOM.progressGaugeFill) {
+    DOM.progressGaugeFill.style.width = `${progressPercent}%`
+  }
+  if (DOM.progressGaugeValue) {
+    DOM.progressGaugeValue.textContent = `${progressPercent}%`
+  }
 }
 
 /**

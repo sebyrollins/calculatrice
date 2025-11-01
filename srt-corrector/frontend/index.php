@@ -157,6 +157,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
                         <span class="stat-label">Doutes</span>
                         <span class="stat-value" id="statDoubt">0</span>
                     </div>
+                    <div class="progress-gauge">
+                        <div class="progress-gauge-label">Progression</div>
+                        <div class="progress-gauge-bar">
+                            <div class="progress-gauge-fill" id="progressGaugeFill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-gauge-value" id="progressGaugeValue">0%</div>
+                    </div>
                 </div>
 
                 <!-- Action Buttons - STICKY -->
@@ -213,6 +220,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
             </section>
 
         </div>
+
+        <!-- Modal d'édition -->
+        <div class="modal" id="editModal" style="display: none;">
+            <div class="modal-overlay" id="modalOverlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Modifier la correction</h3>
+                    <button class="modal-close" id="modalCloseBtn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-field">
+                        <label class="modal-label">Texte original :</label>
+                        <div class="modal-value" id="modalOriginal"></div>
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label">Suggestion de correction :</label>
+                        <div class="modal-value" id="modalSuggestion"></div>
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label">Votre correction :</label>
+                        <input type="text" class="modal-input" id="modalInput" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" id="modalCancelBtn">Annuler</button>
+                    <button class="btn btn-primary" id="modalSaveBtn">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- Footer -->
