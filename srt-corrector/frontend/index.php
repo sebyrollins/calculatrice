@@ -144,66 +144,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
             <!-- Section Editor -->
             <section class="editor-section" id="editorSection" style="display: none;">
 
-                <!-- Statistics Bar - STICKY -->
+                <!-- Statistics Bar with integrated buttons - STICKY -->
                 <div class="stats-bar sticky-stats" id="statsBar">
-                    <div class="stat-item stat-filter" data-filter="all">
-                        <span class="stat-label">Total</span>
-                        <span class="stat-value" id="statTotal">0</span>
-                    </div>
-                    <div class="stat-item stat-minor stat-filter" data-filter="minor">
-                        <span class="stat-label">Mineures</span>
-                        <span class="stat-value" id="statMinor">0</span>
-                    </div>
-                    <div class="stat-item stat-major stat-filter" data-filter="major">
-                        <span class="stat-label">Majeures</span>
-                        <span class="stat-value" id="statMajor">0</span>
-                    </div>
-                    <div class="stat-item stat-doubt stat-filter" data-filter="doubt">
-                        <span class="stat-label">Doutes</span>
-                        <span class="stat-value" id="statDoubt">0</span>
-                    </div>
-                    <div class="progress-gauge">
-                        <div class="progress-gauge-label">Progression</div>
-                        <div class="progress-gauge-bar">
-                            <div class="progress-gauge-fill" id="progressGaugeFill" style="width: 0%"></div>
+                    <div class="stats-group">
+                        <div class="stat-item stat-filter" data-filter="all">
+                            <span class="stat-label">Total</span>
+                            <span class="stat-value" id="statTotal">0</span>
+                            <button class="btn-stat btn-stat-secondary" id="validateAllBtn" title="Valider toutes les corrections">
+                                <span class="btn-icon">✓</span>
+                                Valider tout
+                            </button>
                         </div>
-                        <div class="progress-gauge-value" id="progressGaugeValue">0%</div>
-                    </div>
-                </div>
-
-                <!-- Action Buttons - STICKY -->
-                <div class="action-bar sticky-actions">
-                    <div class="action-group">
-                        <button class="btn btn-secondary" id="validateAllBtn">
-                            <span class="btn-icon">✓</span>
-                            Valider tout
-                        </button>
-                        <button class="btn btn-success" id="validateMajorBtn">
-                            <span class="btn-icon">✓</span>
-                            Valider les majeures
-                        </button>
-                        <button class="btn btn-warning" id="validateDoubtBtn">
-                            <span class="btn-icon">✓</span>
-                            Valider les doutes
-                        </button>
-                    </div>
-
-                    <div class="action-group">
-                        <button class="btn btn-primary" id="downloadSrtBtn">
-                            <span class="btn-icon">⬇</span>
-                            Télécharger SRT
-                        </button>
-                        <button class="btn btn-outline" id="downloadTxtBtn">
-                            <span class="btn-icon">⬇</span>
-                            Télécharger TXT
-                        </button>
+                        <div class="stat-item stat-minor stat-filter" data-filter="minor">
+                            <span class="stat-label">Mineures</span>
+                            <span class="stat-value" id="statMinor">0</span>
+                            <button class="btn-stat btn-stat-blue" id="validateMinorBtn" title="Valider les corrections mineures">
+                                <span class="btn-icon">✓</span>
+                                Valider
+                            </button>
+                        </div>
+                        <div class="stat-item stat-major stat-filter" data-filter="major">
+                            <span class="stat-label">Majeures</span>
+                            <span class="stat-value" id="statMajor">0</span>
+                            <button class="btn-stat btn-stat-success" id="validateMajorBtn" title="Valider les corrections majeures">
+                                <span class="btn-icon">✓</span>
+                                Valider
+                            </button>
+                        </div>
+                        <div class="stat-item stat-doubt stat-filter" data-filter="doubt">
+                            <span class="stat-label">Doutes</span>
+                            <span class="stat-value" id="statDoubt">0</span>
+                            <button class="btn-stat btn-stat-warning" id="validateDoubtBtn" title="Valider les corrections avec doute">
+                                <span class="btn-icon">✓</span>
+                                Valider
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="action-group">
-                        <button class="btn btn-outline" id="newFileBtn">
-                            <span class="btn-icon">↻</span>
-                            Nouveau fichier
-                        </button>
+                    <div class="progress-gauge-container">
+                        <div class="progress-gauge">
+                            <div class="progress-gauge-label">Progression</div>
+                            <div class="progress-gauge-bar">
+                                <div class="progress-gauge-fill" id="progressGaugeFill" style="width: 0%"></div>
+                            </div>
+                            <div class="progress-gauge-value" id="progressGaugeValue">0%</div>
+                        </div>
+                        <div class="utility-buttons">
+                            <button class="btn-utility" id="downloadSrtBtn" title="Télécharger le fichier SRT corrigé">
+                                <span class="btn-icon">⬇</span>
+                                SRT
+                            </button>
+                            <button class="btn-utility" id="downloadTxtBtn" title="Télécharger en format TXT">
+                                <span class="btn-icon">⬇</span>
+                                TXT
+                            </button>
+                            <button class="btn-utility" id="newFileBtn" title="Charger un nouveau fichier">
+                                <span class="btn-icon">↻</span>
+                                NEW
+                            </button>
+                        </div>
                     </div>
                 </div>
 

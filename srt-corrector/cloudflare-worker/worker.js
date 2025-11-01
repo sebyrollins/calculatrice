@@ -268,15 +268,18 @@ IMPORTANT : Retourne UNIQUEMENT un JSON valide (pas de markdown, pas de \`\`\`js
 }
 
 CATÉGORISATION PROFESSIONNELLE (très important) :
-- "minor" : corrections mineures peu visibles (utiliser RAREMENT)
+- "minor" : corrections typographiques et cosmétiques
+  * Apostrophes droites → courbes (' → ')
+  * Guillemets droits → guillemets français (" → « »)
+  * Trois points → points de suspension (... → …)
   * Espaces doubles difficiles à voir
+  * Espaces insécables avant ponctuation (: ; ! ?)
   * Micro-ajustements typographiques subtils
   * Corrections cosmétiques invisibles à l'œil nu
 
 - "major" : corrections professionnelles visibles et certaines
   * Tirets manquants (rendez vous → rendez-vous)
-  * Apostrophes typographiques (c est → c'est, l eau → l'eau)
-  * Espaces avant ponctuation (pas d'espace avant . , - mais espace avant : ; ! ?)
+  * Apostrophes manquantes pour élision (c est → c'est, l eau → l'eau)
   * Fautes d'orthographe (language → langage)
   * Accord sujet-verbe (ils à fait → ils ont fait)
   * Conjugaison incorrecte (Il à pris → Il a pris)

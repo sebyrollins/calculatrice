@@ -423,14 +423,27 @@ body {
   padding: var(--spacing-md);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.stats-group {
+  display: flex;
+  gap: var(--spacing-md);
+  flex: 1;
 }
 
 .stat-item {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   text-align: center;
   padding: var(--spacing-md);
   border-radius: var(--radius-md);
   background: var(--color-bg);
+  gap: var(--spacing-sm);
 }
 
 .stat-filter {
@@ -466,6 +479,7 @@ body {
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xs);
 }
 
 .stat-minor {
@@ -480,9 +494,78 @@ body {
   border-left: 4px solid var(--color-doubt);
 }
 
-/* Progress Gauge */
+/* Boutons de validation sous les stats */
+.btn-stat {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 100%;
+  min-width: 80px;
+}
+
+.btn-stat:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-stat .btn-icon {
+  font-size: 0.9rem;
+}
+
+.btn-stat-secondary {
+  background: var(--color-secondary);
+  color: white;
+}
+
+.btn-stat-secondary:hover {
+  background: #5a67d8;
+}
+
+.btn-stat-blue {
+  background: var(--color-minor);
+  color: white;
+}
+
+.btn-stat-blue:hover {
+  background: #2563eb;
+}
+
+.btn-stat-success {
+  background: var(--color-major);
+  color: white;
+}
+
+.btn-stat-success:hover {
+  background: #059669;
+}
+
+.btn-stat-warning {
+  background: var(--color-doubt);
+  color: white;
+}
+
+.btn-stat-warning:hover {
+  background: #d97706;
+}
+
+/* Progress Gauge Container */
+.progress-gauge-container {
+  flex: 0 0 auto;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
 .progress-gauge {
-  flex: 1.5;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -520,10 +603,46 @@ body {
   text-align: center;
 }
 
+/* Utility Buttons (SRT, TXT, NEW) */
+.utility-buttons {
+  display: flex;
+  gap: var(--spacing-xs);
+  justify-content: center;
+  padding: 0 var(--spacing-md);
+}
+
+.btn-utility {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  background: white;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.btn-utility:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-utility .btn-icon {
+  font-size: 0.85rem;
+}
+
 /* Sticky Elements Heights */
 :root {
-  --stats-height: 120px;
-  --actions-height: 80px;
+  --stats-height: 160px;
+  --actions-height: 0px;
   --header-height: 50px;
 }
 
@@ -536,12 +655,13 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Action Bar - STICKY sous les stats (z-index supérieur pour rester visible) */
+/* Action Bar - DEPRECATED (buttons now integrated in stats bar) */
 .sticky-actions {
-  position: sticky;
-  top: var(--stats-height);
-  z-index: 300;
-  background: var(--color-surface);
+  display: none;
+}
+
+.action-bar {
+  display: none;
 }
 
 /* Blocks Table */
@@ -844,25 +964,6 @@ body {
   padding: 0.375rem 0.5rem;
 }
 
-/* Action Bar - Layout et style (le sticky est géré par .sticky-actions) */
-.action-bar {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-  flex-wrap: wrap;
-  padding: var(--spacing-lg);
-  background: var(--color-surface);
-  border-radius: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: var(--spacing-lg);
-  border-bottom: 2px solid var(--color-border);
-}
-
-.action-group {
-  display: flex;
-  gap: var(--spacing-sm);
-}
-
 /* ===== Responsive ===== */
 @media (max-width: 1024px) {
   .editor-grid {
@@ -873,16 +974,16 @@ body {
     max-height: 500px;
   }
 
-  .action-bar {
+  .stats-bar {
     flex-direction: column;
   }
 
-  .action-group {
-    width: 100%;
+  .stats-group {
+    flex-wrap: wrap;
   }
 
-  .action-group .btn {
-    flex: 1;
+  .progress-gauge-container {
+    min-width: 100%;
   }
 }
 
@@ -901,11 +1002,19 @@ body {
   }
 
   .stats-bar {
-    flex-wrap: wrap;
+    flex-direction: column;
+  }
+
+  .stats-group {
+    flex-direction: column;
   }
 
   .stat-item {
-    flex: 1 1 45%;
+    width: 100%;
+  }
+
+  .progress-gauge-container {
+    min-width: 100%;
   }
 
   .stat-value {

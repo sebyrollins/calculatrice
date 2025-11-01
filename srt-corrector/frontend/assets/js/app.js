@@ -79,6 +79,7 @@ function initDOM() {
   DOM.progressGaugeFill = document.getElementById('progressGaugeFill')
   DOM.progressGaugeValue = document.getElementById('progressGaugeValue')
   DOM.validateAllBtn = document.getElementById('validateAllBtn')
+  DOM.validateMinorBtn = document.getElementById('validateMinorBtn')
   DOM.validateMajorBtn = document.getElementById('validateMajorBtn')
   DOM.validateDoubtBtn = document.getElementById('validateDoubtBtn')
   DOM.downloadSrtBtn = document.getElementById('downloadSrtBtn')
@@ -105,6 +106,10 @@ function initEventListeners() {
   // Boutons d'action
   if (DOM.validateAllBtn) {
     DOM.validateAllBtn.addEventListener('click', () => validateCorrections('all'))
+  }
+
+  if (DOM.validateMinorBtn) {
+    DOM.validateMinorBtn.addEventListener('click', () => validateCorrections('minor'))
   }
 
   if (DOM.validateMajorBtn) {
@@ -314,19 +319,20 @@ function renderBlocksTable() {
       block.corrections.every((c, idx) => AppState.validatedCorrections.has(`${block.index}-${idx}`))
 
     // Déterminer le type de correction dominant pour la classe CSS
-    // Les blocs avec UNIQUEMENT des corrections mineures n'ont PAS de fond coloré
     // Les blocs où TOUTES les corrections sont validées n'ont PAS de fond coloré
     let rowClass = 'row-no-correction'
     if (block.corrections && block.corrections.length > 0 && !allValidated) {
       const hasDoubt = block.corrections.some(c => c.type === 'doubt')
       const hasMajor = block.corrections.some(c => c.type === 'major')
+      const hasMinor = block.corrections.some(c => c.type === 'minor')
 
       if (hasDoubt) {
         rowClass = 'row-has-doubt'
       } else if (hasMajor) {
         rowClass = 'row-has-major'
+      } else if (hasMinor) {
+        rowClass = 'row-has-minor'
       }
-      // Si seulement des corrections mineures, on garde row-no-correction (pas de fond coloré)
     }
     row.classList.add(rowClass)
 
@@ -661,6 +667,7 @@ function validateCorrections(type) {
 
     block.corrections.forEach((correction, corrIndex) => {
       if (type === 'all' ||
+          (type === 'minor' && correction.type === 'minor') ||
           (type === 'major' && correction.type === 'major') ||
           (type === 'doubt' && correction.type === 'doubt')) {
 
