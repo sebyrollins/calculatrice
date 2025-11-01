@@ -454,6 +454,40 @@ function validateSingleCorrection(blockIndex, corrIndex) {
   // Re-render pour mettre à jour le fond du bloc si toutes corrections validées
   renderBlocksTable()
   updateMinimap()
+
+  // Auto-scroll vers le prochain bloc non validé
+  setTimeout(() => {
+    const nextBlockIndex = findNextUnvalidatedBlock(blockIndex)
+    if (nextBlockIndex !== null) {
+      scrollToBlock(nextBlockIndex)
+    }
+  }, 300)
+}
+
+/**
+ * Trouve le prochain bloc avec des corrections non validées
+ */
+function findNextUnvalidatedBlock(currentBlockIndex) {
+  // Commencer à partir du bloc suivant
+  const currentIdx = AppState.blocks.findIndex(b => b.index === currentBlockIndex)
+
+  // Chercher dans les blocs suivants
+  for (let i = currentIdx + 1; i < AppState.blocks.length; i++) {
+    const block = AppState.blocks[i]
+    if (!block.corrections || block.corrections.length === 0) continue
+
+    // Vérifier s'il y a au moins une correction non validée
+    const hasUnvalidated = block.corrections.some((c, idx) => {
+      const correctionId = `${block.index}-${idx}`
+      return !AppState.validatedCorrections.has(correctionId)
+    })
+
+    if (hasUnvalidated) {
+      return block.index
+    }
+  }
+
+  return null // Aucun bloc non validé trouvé
 }
 
 /**

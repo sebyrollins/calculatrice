@@ -1329,9 +1329,9 @@ body {
 .navigation-minimap {
   position: fixed;
   right: 20px;
-  top: 220px;
+  top: 260px;
   width: 50px;
-  max-height: calc(100vh - 240px);
+  max-height: calc(100vh - 280px);
   background: var(--color-surface);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
@@ -1342,16 +1342,12 @@ body {
 }
 
 .minimap-title {
-  font-size: 0.625rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--color-text-secondary);
+  font-size: 1rem;
   text-align: center;
-  margin-bottom: 6px;
-  padding-bottom: 4px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
   border-bottom: 1px solid var(--color-border);
-  opacity: 0.7;
+  opacity: 0.5;
 }
 
 .minimap-blocks {
@@ -1380,8 +1376,10 @@ body {
 
 /* Indicateur de position actuelle */
 .minimap-block.minimap-current {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 1px;
+  transform: scaleX(1.4);
+  border-left: 3px solid #1f2937;
+  border-right: 3px solid #1f2937;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
   z-index: 2;
 }
 

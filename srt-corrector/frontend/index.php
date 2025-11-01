@@ -223,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srtFile'])) {
 
         <!-- Minimap de navigation -->
         <div class="navigation-minimap" id="navigationMinimap" style="display: none;">
-            <div class="minimap-title">Aperçu</div>
+            <div class="minimap-title">≡</div>
             <div class="minimap-blocks" id="minimapBlocks">
                 <!-- Généré dynamiquement -->
             </div>
