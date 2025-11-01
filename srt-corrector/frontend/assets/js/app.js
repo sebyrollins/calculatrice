@@ -492,24 +492,33 @@ function renderBlocksTable() {
           const actionsEl = document.createElement('div')
           actionsEl.className = 'validation-actions'
 
-          const validateBtn = document.createElement('button')
-          validateBtn.className = 'btn btn-success'
-          validateBtn.innerHTML = '<span class="btn-icon">✓</span> Valider'
-          validateBtn.onclick = () => validateSingleCorrection(block.index, corrIndex)
+          const isValidated = AppState.validatedCorrections.has(correctionId)
 
+          // Bouton Modifier : toujours affiché
           const editBtn = document.createElement('button')
           editBtn.className = 'btn btn-outline'
           editBtn.innerHTML = '<span class="btn-icon">✏️</span> Modifier'
           editBtn.onclick = () => editCorrection(block.index, corrIndex)
 
-          const rejectBtn = document.createElement('button')
-          rejectBtn.className = 'btn btn-danger'
-          rejectBtn.innerHTML = '<span class="btn-icon">✕</span> Rejeter'
-          rejectBtn.onclick = () => rejectCorrection(block.index, corrIndex)
+          if (!isValidated) {
+            // Boutons Valider et Rejeter : seulement si NON validé
+            const validateBtn = document.createElement('button')
+            validateBtn.className = 'btn btn-success'
+            validateBtn.innerHTML = '<span class="btn-icon">✓</span> Valider'
+            validateBtn.onclick = () => validateSingleCorrection(block.index, corrIndex)
 
-          actionsEl.appendChild(validateBtn)
-          actionsEl.appendChild(editBtn)
-          actionsEl.appendChild(rejectBtn)
+            const rejectBtn = document.createElement('button')
+            rejectBtn.className = 'btn btn-danger'
+            rejectBtn.innerHTML = '<span class="btn-icon">✕</span> Rejeter'
+            rejectBtn.onclick = () => rejectCorrection(block.index, corrIndex)
+
+            actionsEl.appendChild(validateBtn)
+            actionsEl.appendChild(editBtn)
+            actionsEl.appendChild(rejectBtn)
+          } else {
+            // Si validé : seulement le bouton Modifier
+            actionsEl.appendChild(editBtn)
+          }
 
           cardEl.appendChild(actionsEl)
           validationCell.appendChild(cardEl)
@@ -988,12 +997,26 @@ function getBlockMinimapClass(block) {
   const allValidated = block.corrections && block.corrections.length > 0 &&
     block.corrections.every((c, idx) => AppState.validatedCorrections.has(`${block.index}-${idx}`))
 
-  // Pas de correction ou tout validé → gris clair
-  if (!block.corrections || block.corrections.length === 0 || allValidated) {
-    return allValidated ? 'minimap-validated' : 'minimap-no-correction'
+  // Pas de correction
+  if (!block.corrections || block.corrections.length === 0) {
+    return 'minimap-no-correction'
   }
 
-  // Déterminer le type dominant
+  // Si toutes validées, vérifier le type pour la couleur
+  if (allValidated) {
+    const hasDoubt = block.corrections.some(c => c.type === 'doubt')
+    const hasMinor = block.corrections.some(c => c.type === 'minor')
+
+    if (hasDoubt) {
+      return 'minimap-validated-doubt'
+    } else if (hasMinor && !block.corrections.some(c => c.type === 'major')) {
+      return 'minimap-validated-minor'
+    } else {
+      return 'minimap-validated'
+    }
+  }
+
+  // Non validées : déterminer le type dominant
   const hasDoubt = block.corrections.some(c => c.type === 'doubt')
   const hasMajor = block.corrections.some(c => c.type === 'major')
 
@@ -1017,7 +1040,7 @@ function updateMinimap() {
     if (!minimapBlock) return
 
     // Retirer toutes les classes d'état
-    minimapBlock.classList.remove('minimap-validated', 'minimap-no-correction', 'minimap-major', 'minimap-doubt', 'minimap-minor')
+    minimapBlock.classList.remove('minimap-validated', 'minimap-validated-doubt', 'minimap-validated-minor', 'minimap-no-correction', 'minimap-major', 'minimap-doubt', 'minimap-minor')
 
     // Ajouter la nouvelle classe
     const blockClass = getBlockMinimapClass(block)

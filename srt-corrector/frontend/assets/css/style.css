@@ -905,6 +905,13 @@ body {
   opacity: 0.8;
 }
 
+/* Correction mineure validée - couleur bleue spécifique */
+.validation-card.validation-minor.validated {
+  background: #e3f2fd;
+  border-left-color: var(--color-minor);
+  opacity: 0.8;
+}
+
 .validation-header {
   display: flex;
   justify-content: space-between;
@@ -1287,6 +1294,13 @@ body {
   opacity: 0.8;
 }
 
+/* Correction mineure validée - couleur bleue spécifique */
+.validation-card.validation-minor.validated {
+  background: #e3f2fd;
+  border-left-color: var(--color-minor);
+  opacity: 0.8;
+}
+
 .validation-header {
   margin-bottom: 0.375rem;
 }
@@ -1584,6 +1598,16 @@ body {
 .minimap-block.minimap-validated {
   background: var(--color-border);
   opacity: 0.3;
+}
+
+.minimap-block.minimap-validated-doubt {
+  background: #ffe0b2;
+  opacity: 0.7;
+}
+
+.minimap-block.minimap-validated-minor {
+  background: #bbdefb;
+  opacity: 0.7;
 }
 
 .minimap-block.minimap-no-correction {
