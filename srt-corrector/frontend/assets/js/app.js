@@ -206,11 +206,11 @@ async function processUploadedFile(content, filename) {
   let estimatedTimeMs
 
   if (fileSizeKB < 50) {
-    estimatedTimeMs = 5000  // 5 secondes pour petits fichiers
+    estimatedTimeMs = 12500  // 12.5 secondes pour petits fichiers
   } else if (fileSizeKB < 200) {
-    estimatedTimeMs = 10000  // 10 secondes pour fichiers moyens
+    estimatedTimeMs = 25000  // 25 secondes pour fichiers moyens
   } else {
-    estimatedTimeMs = 15000  // 15 secondes pour gros fichiers
+    estimatedTimeMs = 37500  // 37.5 secondes pour gros fichiers
   }
 
   // Progression fictive fluide jusqu'à 80%
