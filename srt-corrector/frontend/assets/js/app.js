@@ -201,19 +201,54 @@ async function processUploadedFile(content, filename) {
   // Afficher la section de chargement
   showSection('loading')
 
+  // Estimer le temps de traitement en fonction de la taille du fichier
+  const fileSizeKB = new Blob([content]).size / 1024
+  let estimatedTimeMs
+
+  if (fileSizeKB < 50) {
+    estimatedTimeMs = 5000  // 5 secondes pour petits fichiers
+  } else if (fileSizeKB < 200) {
+    estimatedTimeMs = 10000  // 10 secondes pour fichiers moyens
+  } else {
+    estimatedTimeMs = 15000  // 15 secondes pour gros fichiers
+  }
+
+  // Progression fictive fluide jusqu'à 80%
+  let currentProgress = 0
+  const targetProgress = 80
+  const updateInterval = 100  // Mise à jour toutes les 100ms
+  const progressIncrement = (targetProgress / estimatedTimeMs) * updateInterval
+
+  updateProgress(0, 'Veuillez patienter pendant l\'analyse...')
+
+  const progressInterval = setInterval(() => {
+    currentProgress += progressIncrement
+    if (currentProgress >= targetProgress) {
+      currentProgress = targetProgress
+      clearInterval(progressInterval)
+    }
+    updateProgress(Math.round(currentProgress), 'Veuillez patienter pendant l\'analyse...')
+  }, updateInterval)
+
   try {
     // Envoyer au Worker Cloudflare
-    updateProgress(10, 'Envoi au serveur...')
-
     const correctedBlocks = await sendToWorker(content, filename)
 
-    updateProgress(90, 'Traitement des résultats...')
+    // Arrêter la progression fictive
+    clearInterval(progressInterval)
+
+    // Accélérer jusqu'à 90%
+    updateProgress(85, 'Traitement des résultats...')
+    await new Promise(resolve => setTimeout(resolve, 200))
 
     // Nettoyer les corrections fantômes (où original === corrected)
     cleanPhantomCorrections(correctedBlocks)
 
     // Sauvegarder les blocs
     AppState.blocks = correctedBlocks
+
+    updateProgress(95, 'Finalisation...')
+    await new Promise(resolve => setTimeout(resolve, 200))
 
     // Afficher l'éditeur
     updateProgress(100, 'Terminé !')
@@ -224,6 +259,7 @@ async function processUploadedFile(content, filename) {
 
   } catch (error) {
     console.error('Erreur lors du traitement:', error)
+    clearInterval(progressInterval)
     alert(`Erreur : ${error.message}`)
     showSection('upload')
   }
@@ -927,6 +963,57 @@ function updateStats(stats) {
   }
   if (DOM.progressGaugeValue) {
     DOM.progressGaugeValue.textContent = `${progressPercent}%`
+  }
+
+  // Mettre à jour l'état des boutons de validation
+  updateValidationButtonsState(stats)
+}
+
+/**
+ * Met à jour l'état des boutons de validation (désactive si toutes corrections validées)
+ */
+function updateValidationButtonsState(stats) {
+  // Compter combien de corrections de chaque type sont validées
+  let validatedMinorCount = 0
+  let validatedMajorCount = 0
+  let validatedDoubtCount = 0
+
+  AppState.blocks.forEach(block => {
+    if (!block.corrections) return
+    block.corrections.forEach((correction, corrIndex) => {
+      const correctionId = `${block.index}-${corrIndex}`
+      if (AppState.validatedCorrections.has(correctionId)) {
+        if (correction.type === 'minor') validatedMinorCount++
+        else if (correction.type === 'major') validatedMajorCount++
+        else if (correction.type === 'doubt') validatedDoubtCount++
+      }
+    })
+  })
+
+  // Désactiver/activer les boutons en fonction
+  const allMinorValidated = stats.minor > 0 && validatedMinorCount === stats.minor
+  const allMajorValidated = stats.major > 0 && validatedMajorCount === stats.major
+  const allDoubtValidated = stats.doubt > 0 && validatedDoubtCount === stats.doubt
+  const allValidated = stats.total > 0 && AppState.validatedCorrections.size === stats.total
+
+  if (DOM.validateMinorBtn) {
+    DOM.validateMinorBtn.disabled = allMinorValidated || stats.minor === 0
+    DOM.validateMinorBtn.classList.toggle('btn-disabled', allMinorValidated || stats.minor === 0)
+  }
+
+  if (DOM.validateMajorBtn) {
+    DOM.validateMajorBtn.disabled = allMajorValidated || stats.major === 0
+    DOM.validateMajorBtn.classList.toggle('btn-disabled', allMajorValidated || stats.major === 0)
+  }
+
+  if (DOM.validateDoubtBtn) {
+    DOM.validateDoubtBtn.disabled = allDoubtValidated || stats.doubt === 0
+    DOM.validateDoubtBtn.classList.toggle('btn-disabled', allDoubtValidated || stats.doubt === 0)
+  }
+
+  if (DOM.validateAllBtn) {
+    DOM.validateAllBtn.disabled = allValidated
+    DOM.validateAllBtn.classList.toggle('btn-disabled', allValidated)
   }
 }
 

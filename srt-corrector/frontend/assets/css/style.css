@@ -565,6 +565,13 @@ body {
   background: #d97706;
 }
 
+/* Bouton désactivé */
+.btn-disabled {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
 /* Progress Gauge Container */
 .progress-gauge-container {
   flex: 0 0 auto;
